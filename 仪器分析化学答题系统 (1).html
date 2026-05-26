@@ -1,0 +1,3840 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>仪器分析化学答题系统</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans SC', sans-serif; background: #f3f4f6; line-height: 1.6; }
+.container { max-width: 800px; margin: 0 auto; padding: 16px; padding-bottom: 100px; }
+.nav { position: sticky; top: 0; z-index: 50; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.1); }
+.nav-inner { max-width: 800px; margin: 0 auto; padding: 16px; display: flex; justify-content: space-between; align-items: center; }
+.nav-title { display: flex; align-items: center; gap: 12px; }
+.nav-icon { width: 40px; height: 40px; background: linear-gradient(135deg, #3b82f6, #6366f1); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; font-size: 18px; }
+.nav-text h1 { font-size: 16px; font-weight: 700; }
+.nav-text p { font-size: 12px; color: #9ca3af; }
+.nav-stats { display: flex; gap: 12px; }
+.stat-pill { padding: 6px 12px; border-radius: 20px; font-size: 14px; }
+.stat-pill.streak { background: #fff7ed; color: #ea580c; font-weight: 700; }
+.stat-pill.score { background: #f0fdf4; color: #16a34a; font-weight: 700; }
+.filter-bar { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 16px; }
+.filter-btn { padding: 8px 16px; border-radius: 20px; border: 1px solid #e5e7eb; background: #fff; color: #6b7280; font-size: 14px; cursor: pointer; white-space: nowrap; }
+.filter-btn:hover { border-color: #3b82f6; color: #3b82f6; }
+.filter-btn.active { background: #3b82f6; color: #fff; border-color: #3b82f6; }
+.card { background: #fff; border-radius: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); padding: 24px; margin-bottom: 20px; }
+.card-header { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+.tag { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+.tag-choice { background: #dbeafe; color: #1e40af; }
+.tag-judgment { background: #fce7f3; color: #9d174d; }
+.tag-essay { background: #d1fae5; color: #065f46; }
+.card-num { color: #9ca3af; font-size: 13px; }
+.card-title { font-size: 17px; font-weight: 700; color: #1f2937; margin-bottom: 16px; line-height: 1.6; }
+.opt { border: 2px solid #e5e7eb; border-radius: 12px; padding: 14px 16px; margin: 10px 0; cursor: pointer; transition: all .2s; display: flex; align-items: flex-start; gap: 12px; }
+.opt:hover { border-color: #3b82f6; background: #eff6ff; transform: translateX(4px); }
+.opt-letter { width: 32px; height: 32px; border-radius: 50%; background: #f3f4f6; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; flex-shrink: 0; color: #374151; }
+.opt-text { color: #374151; font-size: 15px; line-height: 1.5; flex: 1; }
+.answer-box { display: none; background: #f8fafc; border-left: 4px solid #3b82f6; border-radius: 0 8px 8px 0; padding: 16px; margin-top: 12px; }
+.answer-box.show { display: block; }
+.answer-label { font-weight: 700; color: #16a34a; margin-bottom: 8px; font-size: 15px; }
+.answer-text { color: #4b5563; font-size: 14px; line-height: 1.7; }
+.essay-preview { background: #f9fafb; padding: 14px; border-radius: 10px; margin-bottom: 16px; color: #4b5563; font-size: 14px; line-height: 1.6; }
+.essay-btn { background: linear-gradient(135deg, #667eea, #764ba2); color: #fff; border: none; padding: 12px 24px; border-radius: 12px; cursor: pointer; font-size: 14px; font-weight: 600; width: 100%; }
+.essay-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(102,126,234,.3); }
+.essay-ans { display: none; background: linear-gradient(135deg, #eef2ff, #f3e8ff); border-radius: 12px; padding: 20px; border: 1px solid #c7d2fe; margin-top: 12px; }
+.essay-ans.show { display: block; }
+.essay-ans-title { font-weight: 700; color: #3730a3; margin-bottom: 10px; font-size: 15px; }
+.essay-ans-content { color: #374151; font-size: 14px; line-height: 1.8; white-space: pre-wrap; }
+.opt.correct { border-color: #22c55e; background: #f0fdf4; }
+.opt.correct .opt-letter { background: #22c55e; color: #fff; }
+.opt.wrong { border-color: #ef4444; background: #fef2f2; }
+.opt.wrong .opt-letter { background: #ef4444; color: #fff; }
+.opt.disabled { cursor: default; opacity: 0.8; }
+.stat-bar { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #fff; padding: 12px 24px; border-radius: 30px; box-shadow: 0 4px 20px rgba(0,0,0,.1); display: flex; gap: 16px; align-items: center; z-index: 40; font-size: 14px; }
+</style>
+</head>
+<body>
+<div class="nav">
+  <div class="nav-inner">
+    <div class="nav-title">
+      <div class="nav-icon">化</div>
+      <div class="nav-text">
+        <h1>仪器分析化学答题</h1>
+        <p>共 119 题</p>
+      </div>
+    </div>
+    <div class="nav-stats">
+      <span class="stat-pill streak">🔥 <span id="streak">0</span></span>
+      <span class="stat-pill score">✓ <span id="score">0</span></span>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="filter-bar">
+    <button class="filter-btn active" onclick="showAll()">全部</button>
+    <button class="filter-btn" onclick="showChoice()">选择题</button>
+    <button class="filter-btn" onclick="showJudgment()">判断题</button>
+    <button class="filter-btn" onclick="showEssay()">简答题/名词解释</button>
+  </div>
+  <div id="question-list">
+
+    <div class="card choice-card" data-type="choice">
+      <div class="card-header">
+        <span class="tag tag-choice">选择题</span>
+        <span class="card-num">第 1 题</span>
+      </div>
+      <div class="card-title">仪器分析与化学分析相比，下列说法正确的是</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, true, 'A', 'ABD')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">仪器分析灵敏度高</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, true, 'B', 'ABD')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">仪器分析样本用量少</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'C', 'ABD')" data-label="C">
+          <div class="opt-letter">C</div>
+          <div class="opt-text">仪器分析相对误差小</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, true, 'D', 'ABD')" data-label="D">
+          <div class="opt-letter">D</div>
+          <div class="opt-text">仪器分析选择性好</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：ABD</div>
+        <div class="answer-text">答案：ABD</div>
+      </div>
+    </div>
+
+    <div class="card essay-card" data-type="essay">
+      <div class="card-header">
+        <span class="tag tag-essay">简答题</span>
+        <span class="card-num">第 1 题</span>
+      </div>
+      <div class="card-title">简答题：2.准确度的评价方法 （食品农残的价方法）</div>
+      <div class="essay-preview">食品中农药残留分析—准确度评价方法
+1. 加标回收实验
+在空白样品中加入已知量农药标准品，按方法测定，计算回收率，反映结果准确程度。
+2. 标准物质对照法
+采用有证标准物质（CRM）进行测定，将测定值与标准值比较，评价准确度。
+3. 方法比对实验
+用国标方法或权威方法与待测方法同时测定同一样品，比较结果一致性。
+4. 实验室间验证
+多个实验室对同一样品协同测...</div>
+      <button class="essay-btn" onclick="toggleEssay(this)">查看答案与解析</button>
+      <div class="essay-ans">
+        <div class="essay-ans-title">📖 参考答案</div>
+        <div class="essay-ans-content">食品中农药残留分析—准确度评价方法
+1. 加标回收实验
+在空白样品中加入已知量农药标准品，按方法测定，计算回收率，反映结果准确程度。
+2. 标准物质对照法
+采用有证标准物质（CRM）进行测定，将测定值与标准值比较，评价准确度。
+3. 方法比对实验
+用国标方法或权威方法与待测方法同时测定同一样品，比较结果一致性。
+4. 实验室间验证
+多个实验室对同一样品协同测定，统计结果偏差，评价方法整体准确度与可靠性。
+1频率可以用下面哪种方式可以表示( )
+A .c / σ
+B .σ · c
+C .1 /λ
+D .σ/ c</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="choice">
+      <div class="card-header">
+        <span class="tag tag-choice">选择题</span>
+        <span class="card-num">第 2 题</span>
+      </div>
+      <div class="card-title">2下列分析法是基于成键电子能级跃迁开发出来的是( )</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, false, 'A', 'C')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">核磁共振波谱法</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'B', 'C')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">质谱法</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, true, 'C', 'C')" data-label="C">
+          <div class="opt-letter">C</div>
+          <div class="opt-text">紫外分光光度法</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'D', 'C')" data-label="D">
+          <div class="opt-letter">D</div>
+          <div class="opt-text">Raman光谱法</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：C</div>
+        <div class="answer-text">正确答案是：紫外分光光度法（当物质吸收紫外或可见光时，其分子中的成键电子（如σ电子、π电子）或孤对电子（n电子）会从基态跃迁至激发态，这种跃迁所需的能量对应于紫外-可见光区的波长范围。）</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="choice">
+      <div class="card-header">
+        <span class="tag tag-choice">选择题</span>
+        <span class="card-num">第 3 题</span>
+      </div>
+      <div class="card-title">核磁共振波谱法是基于原子核在磁场中对射频辐射的吸收，反映的是核自旋能级的跃迁，与电子能级无关。
+质谱法是基于分子或原子在电场和磁场中的质荷比（m/z）分离，不涉及电子能级跃迁。
+Raman光谱法是基于光的散射现象，反映的是分子振动或转动能级的变化，不是电子能级跃迁。
+3下列分析法是基于光的散射现象开发出来的是( )</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, true, 'A', 'A')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">Raman光谱法</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'B', 'A')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">化学发光分析法</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'C', 'A')" data-label="C">
+          <div class="opt-letter">C</div>
+          <div class="opt-text">红外光谱法</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'D', 'A')" data-label="D">
+          <div class="opt-letter">D</div>
+          <div class="opt-text">核磁共振波谱法</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：A</div>
+        <div class="answer-text">正确答案是：Raman光谱法</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="choice">
+      <div class="card-header">
+        <span class="tag tag-choice">选择题</span>
+        <span class="card-num">第 4 题</span>
+      </div>
+      <div class="card-title">4光量子的能量反比于辐射的( )</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, true, 'A', 'A')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">波长</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'B', 'A')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">传播速度</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'C', 'A')" data-label="C">
+          <div class="opt-letter">C</div>
+          <div class="opt-text">波数</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'D', 'A')" data-label="D">
+          <div class="opt-letter">D</div>
+          <div class="opt-text">频率</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：A</div>
+        <div class="answer-text">正确答案是：波长（E = hν = hc / λ）</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="judgment">
+      <div class="card-header">
+        <span class="tag tag-judgment">判断题</span>
+        <span class="card-num">第 1 题</span>
+      </div>
+      <div class="card-title">红外光谱属于线状光谱
+选择一项：</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, false, 'A', '')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">对</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'B', '')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">错</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：见解析</div>
+        <div class="answer-text">正确答案是“错”。
+下列属于线状光谱的是
+A红外光谱
+B紫外光谱
+C原子吸收光谱
+D质谱</div>
+      </div>
+    </div>
+
+    <div class="card essay-card" data-type="essay">
+      <div class="card-header">
+        <span class="tag tag-essay">简答题</span>
+        <span class="card-num">第 2 题</span>
+      </div>
+      <div class="card-title">名词解释：1.Spectrometric Analysis（光谱分析法）</div>
+      <div class="essay-preview">Spectrometric Analysis（光谱分析法）
+指基于物质与电磁辐射（光）相互作用产生的特征光谱，对物质进行定性、定量及结构分析的一类仪器分析方法。通过测量光谱的波长、强度等参数，确定物质的组成、含量及分子/原子结构。
+下列化合物中羰基伸缩振动能级跃迁需要能量最高的是( )
+a. 甲醛
+b. 甲酸
+c. 甲酰氯
+d. 甲酰胺</div>
+      <button class="essay-btn" onclick="toggleEssay(this)">查看答案与解析</button>
+      <div class="essay-ans">
+        <div class="essay-ans-title">📖 参考答案</div>
+        <div class="essay-ans-content">Spectrometric Analysis（光谱分析法）
+指基于物质与电磁辐射（光）相互作用产生的特征光谱，对物质进行定性、定量及结构分析的一类仪器分析方法。通过测量光谱的波长、强度等参数，确定物质的组成、含量及分子/原子结构。
+下列化合物中羰基伸缩振动能级跃迁需要能量最高的是( )
+a. 甲醛
+b. 甲酸
+c. 甲酰氯
+d. 甲酰胺</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="choice">
+      <div class="card-header">
+        <span class="tag tag-choice">选择题</span>
+        <span class="card-num">第 5 题</span>
+      </div>
+      <div class="card-title">（这四个分子都含有羰基（C=O），但它们的结构式各不相同，以下是它们的详细结构式：
+1. 甲醛（HCHO）
+结构式：H—C(=O)—H
+结构特点：最简单的醛，羰基碳连接两个氢原子，呈平面三角形结构。
+2. 甲酸（HCOOH）
+结构式：H—C(=O)—O—H
+结构特点：最简单的羧酸，羰基碳连接一个氢原子和一个羟基（—OH），同时含有醛基和羧基的特性。
+3. 甲酰氯（HCOCl）
+结构式：H—C(=O)—Cl
+结构特点：酰卤类化合物，羰基碳连接一个氢原子和一个氯原子，氯原子的强吸电子效应使羰基键能增强。
+4. 甲酰胺（HCONH₂）
+结构式：H—C(=O)—NH₂
+结构特点：酰胺类化合物，羰基碳连接一个氢原子和一个氨基（—NH₂），氮原子的孤对电子与羰基形成共轭，削弱了C=O双键特性。
+甲酰氯 (HCOCl) - 能量最高，氯原子（Cl）的强吸电子诱导效应（-I）占主导地位，使得羰基碳上的电子云密度降低，C=O双键的极性增强，键的强度增加，力常数最大。甲酰胺 (HCONH₂) - 能量最低，氨基（-NH₂）的氮原子给电子共轭效应（+M）非常显著，远强于其微弱的吸电子诱导效应（-I）。强烈的电子离域作用极大地削弱了C=O双键的强度，使其最接近单键，因此所需能量最低。）
+下列不可以观测到红外信号的是( )</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, false, 'A', 'C')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">二氧化碳分子的面内摇摆振动</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'B', 'C')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">二氧化碳分子的面内剪切振动</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, true, 'C', 'C')" data-label="C">
+          <div class="opt-letter">C</div>
+          <div class="opt-text">二氧化碳分子的对称伸缩振动</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'D', 'C')" data-label="D">
+          <div class="opt-letter">D</div>
+          <div class="opt-text">二氧化碳分子的不对称伸缩振动</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：C</div>
+        <div class="answer-text">正确答案是：二氧化碳分子的对称伸缩振动</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="choice">
+      <div class="card-header">
+        <span class="tag tag-choice">选择题</span>
+        <span class="card-num">第 6 题</span>
+      </div>
+      <div class="card-title">中红外光谱仪常用下列哪种材质的样本池</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, false, 'A', 'B')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">玻璃</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, true, 'B', 'B')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">溴化钾</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'C', 'B')" data-label="C">
+          <div class="opt-letter">C</div>
+          <div class="opt-text">氧化铝</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'D', 'B')" data-label="D">
+          <div class="opt-letter">D</div>
+          <div class="opt-text">石英</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：B</div>
+        <div class="answer-text">正确答案是：溴化钾（红外光谱仪的样品池窗片材质需满足在红外光区（通常范围为4000–400 cm⁻¹）内无吸收，以确保红外光能透过样品池而不被窗片本身吸收。</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="choice">
+      <div class="card-header">
+        <span class="tag tag-choice">选择题</span>
+        <span class="card-num">第 7 题</span>
+      </div>
+      <div class="card-title">玻璃：在红外区有强烈吸收。
+石英：适用于紫外-可见光区，在红外区有吸收，不适合用于中红外光谱仪的样品池窗片。
+氧化铝：不具备在红外区透明且无吸收的特性，不用于红外样品池。
+溴化钾（KBr）：是红外光谱分析中最常用的样品池窗片材料，因其晶体在4000–400 cm⁻¹范围内无红外吸收，且透光性好、机械性能适中，可制成透明薄片用于液体池或压片法固体样品测定。
+）
+红外光谱常用光源</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, false, 'A', 'B')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">卤灯</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, true, 'B', 'B')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">硅碳棒</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'C', 'B')" data-label="C">
+          <div class="opt-letter">C</div>
+          <div class="opt-text">激光</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'D', 'B')" data-label="D">
+          <div class="opt-letter">D</div>
+          <div class="opt-text">钨灯</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：B</div>
+        <div class="answer-text">正确答案是：硅碳棒</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="choice">
+      <div class="card-header">
+        <span class="tag tag-choice">选择题</span>
+        <span class="card-num">第 8 题</span>
+      </div>
+      <div class="card-title">NH3的振动自由度()</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, false, 'A', 'D')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">9</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'B', 'D')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">8</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'C', 'D')" data-label="C">
+          <div class="opt-letter">C</div>
+          <div class="opt-text">7</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, true, 'D', 'D')" data-label="D">
+          <div class="opt-letter">D</div>
+          <div class="opt-text">6</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：D</div>
+        <div class="answer-text">选D 6</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="judgment">
+      <div class="card-header">
+        <span class="tag tag-judgment">判断题</span>
+        <span class="card-num">第 2 题</span>
+      </div>
+      <div class="card-title">吸光物质浓度较低时，朗伯-比尔定律通常更适用。
+为什么浓度低时更适用？
+朗伯-比尔定律成立的一个重要前提是：吸光质点之间没有相互作用。
+在低浓度（稀溶液）时：吸光物质的分子或离子彼此距离较远，互不干扰，就像独自在操场上跑步的人，互不影响。此时，吸光度与浓度呈完美的线性关系，定律非常适用。
+在高浓度时：吸光质点彼此靠得很近，相互作用增强（如静电作用、缔合、解离等），这会改变它们对光的吸收能力。这就好比操场上挤满了人，大家的行动会互相影响。这种相互作用会导致吸光度与浓度的关系偏离线性，从而造成标准曲线弯曲，偏离朗伯-比尔定律。
+因此，为了保证测量的准确性，分光光度法通常要求待测溶液为稀溶液。
+分光光度法中，测量波长的选择原则是“最大吸收原则”和“吸收最大、干扰最小原则”。</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, false, 'A', '对')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">错误</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'B', '对')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">正确</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：对</div>
+        <div class="answer-text">正确答案是：正确</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="judgment">
+      <div class="card-header">
+        <span class="tag tag-judgment">判断题</span>
+        <span class="card-num">第 3 题</span>
+      </div>
+      <div class="card-title">（在分光光度法中，测量波长的选择遵循两个核心原则：最大吸收原则和吸收最大、干扰最小原则。
+最大吸收原则：通常选择被测物质吸收光谱中吸收最强的波长（即最大吸收波长，λmax）进行测定。这是因为在最大吸收波长处，物质的吸光度最大，从而获得最高的检测灵敏度，有利于低浓度组分的准确测定。
+吸收最大、干扰最小原则：在满足最大吸收的前提下，应优先选择共存组分干扰最小的波长。即使该波长不是最大吸收波长，只要被测组分有足够吸收且干扰可忽略，也应优先选择，以保证测定的选择性和准确性。）
+分光光度法在紫外光区进行测定时，必须使用石英比色皿（吸收池），不能使用玻璃比色皿（吸收池）。</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, false, 'A', '对')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">错误</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'B', '对')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">正确</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：对</div>
+        <div class="answer-text">正确答案是：正确</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="choice">
+      <div class="card-header">
+        <span class="tag tag-choice">选择题</span>
+        <span class="card-num">第 9 题</span>
+      </div>
+      <div class="card-title">吸光度（浓度）的测量相对误差随吸光度值的大小不同而变化，为保证测量的相对误差较小，应使待测溶液的吸光度在</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, false, 'A', 'D')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">0.8~1.0 之间</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'B', 'D')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">0~0.2 之间</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'C', 'D')" data-label="C">
+          <div class="opt-letter">C</div>
+          <div class="opt-text">&amp;gt; 1.0</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, true, 'D', 'D')" data-label="D">
+          <div class="opt-letter">D</div>
+          <div class="opt-text">0.2~0.8 之间</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：D</div>
+        <div class="answer-text">正确答案是：0.2~0.8 之间</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="judgment">
+      <div class="card-header">
+        <span class="tag tag-judgment">判断题</span>
+        <span class="card-num">第 4 题</span>
+      </div>
+      <div class="card-title">朗伯-比尔定律适用于任何均匀、非散射的固体、液体或气体介质。</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, false, 'A', '对')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">正确</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'B', '对')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">错误</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：对</div>
+        <div class="answer-text">正确答案是：正确</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="judgment">
+      <div class="card-header">
+        <span class="tag tag-judgment">判断题</span>
+        <span class="card-num">第 5 题</span>
+      </div>
+      <div class="card-title">溶液的吸光度 A 与溶液中吸光物质的性质、浓度及液层厚度（光程）有关，而与入射光波长无关。</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, false, 'A', '错')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">正确</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'B', '错')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">错误</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：错</div>
+        <div class="answer-text">正确答案是：错误</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="choice">
+      <div class="card-header">
+        <span class="tag tag-choice">选择题</span>
+        <span class="card-num">第 10 题</span>
+      </div>
+      <div class="card-title">溶液的吸光度 A 与溶液中吸光物质的性质、浓度及液层厚度（光程）有关，同时与入射光的波长密切相关。根据朗伯-比尔定律 A = εbc，其中 ε 为摩尔吸光系数，它与入射光的波长和吸光物质本身的性质有关；b 为液层厚度（光程）；c 为溶液浓度。因此，吸光度 A 是波长、浓度和光程三者的函数。
+题干称“吸光度 A 与入射光波长无关”，这是错误的。因为不同波长的光被物质吸收的程度不同，吸光度随波长变化，这也是分光光度法中选择最大吸收波长进行测定的原因。
+符合朗伯-比尔定律的溶液，当浓度为 c 时，透射比为 T，若浓度增大一倍，则吸光度 A 等于</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, false, 'A', 'B')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">-(lgT)/2</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, true, 'B', 'B')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">2lgT</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'C', 'B')" data-label="C">
+          <div class="opt-letter">C</div>
+          <div class="opt-text">(lgT)/2</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'D', 'B')" data-label="D">
+          <div class="opt-letter">D</div>
+          <div class="opt-text">-2lgT</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：B</div>
+        <div class="answer-text">正确答案是：-2lgT</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="choice">
+      <div class="card-header">
+        <span class="tag tag-choice">选择题</span>
+        <span class="card-num">第 11 题</span>
+      </div>
+      <div class="card-title">A=lg(I0​/It​)=εbc
+A=-lgT
+下列关于分光光度计光源的叙述，正确的是</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, false, 'A', 'B')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">分光光度计在可见光区的光源是氢灯或氘灯，在紫外光区的光源是钨灯或碘钨灯。</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, true, 'B', 'B')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">分光光度计在可见光区的光源是钨灯或碘钨灯，在紫外光区的光源是氢灯或氘灯。</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'C', 'B')" data-label="C">
+          <div class="opt-letter">C</div>
+          <div class="opt-text">分光光度计在紫外和可见光区的光源都是氢灯或氘灯。</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'D', 'B')" data-label="D">
+          <div class="opt-letter">D</div>
+          <div class="opt-text">分光光度计在紫外和可见光区的光源都是钨灯或碘钨灯。</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：B</div>
+        <div class="answer-text">正确答案是：分光光度计在可见光区的光源是钨灯或碘钨灯，在紫外光区的光源是氢灯或氘灯。</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="choice">
+      <div class="card-header">
+        <span class="tag tag-choice">选择题</span>
+        <span class="card-num">第 12 题</span>
+      </div>
+      <div class="card-title">可见光用的家里的钨灯
+符合朗伯-比尔定律的溶液，用 1 cm 吸收池，测得透射比为 80%，若用 5 cm 吸收池，则其透射比为</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, false, 'A', 'D')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">16%</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'B', 'D')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">67%</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'C', 'D')" data-label="C">
+          <div class="opt-letter">C</div>
+          <div class="opt-text">40%</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, true, 'D', 'D')" data-label="D">
+          <div class="opt-letter">D</div>
+          <div class="opt-text">33%</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：D</div>
+        <div class="answer-text">正确答案是：33%</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="judgment">
+      <div class="card-header">
+        <span class="tag tag-judgment">判断题</span>
+        <span class="card-num">第 6 题</span>
+      </div>
+      <div class="card-title">透射比 T 与溶液的浓度成正比。</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, false, 'A', '错')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">错误</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'B', '错')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">正确</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：错</div>
+        <div class="answer-text">正确答案是：错误</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="choice">
+      <div class="card-header">
+        <span class="tag tag-choice">选择题</span>
+        <span class="card-num">第 13 题</span>
+      </div>
+      <div class="card-title">透射比  与溶液浓度之间不是正比关系，而是负相关关系。
+以下不是朗伯比尔定律的前提条件</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, false, 'A', 'C')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">单色光</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'B', 'C')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">平行</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, true, 'C', 'C')" data-label="C">
+          <div class="opt-letter">C</div>
+          <div class="opt-text">液层厚度一定</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'D', 'C')" data-label="D">
+          <div class="opt-letter">D</div>
+          <div class="opt-text">稀溶液</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：C</div>
+        <div class="answer-text">答案：C</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="choice">
+      <div class="card-header">
+        <span class="tag tag-choice">选择题</span>
+        <span class="card-num">第 14 题</span>
+      </div>
+      <div class="card-title">关于分子光谱和原子光谱的区别，以下正确的是</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, false, 'A', 'B')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">分子光谱是线状光谱</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, true, 'B', 'B')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">原子光谱是线状光谱</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'C', 'B')" data-label="C">
+          <div class="opt-letter">C</div>
+          <div class="opt-text">分子光谱是非连续光谱</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'D', 'B')" data-label="D">
+          <div class="opt-letter">D</div>
+          <div class="opt-text">原子光谱是连续光谱</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：B</div>
+        <div class="answer-text">答案：B</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="choice">
+      <div class="card-header">
+        <span class="tag tag-choice">选择题</span>
+        <span class="card-num">第 15 题</span>
+      </div>
+      <div class="card-title">发色团的π电子共轭形成大π键，使得（ ）</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, false, 'A', 'C')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">无法判断</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'B', 'C')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">吸收强度减弱</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, true, 'C', 'C')" data-label="C">
+          <div class="opt-letter">C</div>
+          <div class="opt-text">吸收强度增大</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'D', 'C')" data-label="D">
+          <div class="opt-letter">D</div>
+          <div class="opt-text">吸收不变</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：C</div>
+        <div class="answer-text">答案：C 共轭效应导致π→π*跃迁所需的能量降低，从而吸收波长向长波方向移动（即发生红移）。更重要的是，共轭体系的扩展增强了电子跃迁的概率，表现为吸收强度增大。</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="judgment">
+      <div class="card-header">
+        <span class="tag tag-judgment">判断题</span>
+        <span class="card-num">第 7 题</span>
+      </div>
+      <div class="card-title">13.紫外—可见分光光度法（UV-Vis）
+基于物质分子对紫外-可见光区电磁辐射的选择性吸收，根据吸收光谱及吸光度进行定性、定量及结构分析的方法。
+原电池中，活动性强的金属作为正极，得到电子，发生还原反应。
+选择一项:</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, false, 'A', '对')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">对</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'B', '对')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">错</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：对</div>
+        <div class="answer-text">正确答案是“错”。
+升失氧化还原剂，降得还原氧化剂。活动性强的金属通常作为负极，失去电子（价态升高），发生氧化反应。
+电池书写中，通常把负极写在左边。
+选择一项:
+对
+错
+正确答案是“对”。
+温度一定时，甘汞电极的电极电位只与电极( )有关
+a. 外部H⁺活度
+b. 外部Cl⁻活度
+c. 内部Cl⁻活度
+d. 内部H⁺活度
+正确答案是内部Cl⁻活度
+甘汞电极的电极电位主要由其内部参比溶液中氯离子（Cl⁻）的活度决定。其电极反应为：
+Hg₂Cl₂ + 2e⁻ ⇌ 2Hg + 2Cl⁻
+根据能斯特方程，电极电位表达式为：
+φ = φ° - (0.0592 V) · lg a(Cl⁻) （在25°C时）
+由此可见，在温度恒定的前提下，甘汞电极的电位仅取决于其内部Cl⁻的活度，而与外部溶液的H⁺或Cl⁻活度无关。这是因为在甘汞电极结构中，内部参比溶液（通常是KCl溶液）与电极反应直接相关，外部溶液通过盐桥与内部溶液隔离，其离子浓度不影响电极电位本身，仅影响液接电位（通常可忽略或补偿）。
+测定溶液pH值时，通常是以pH玻璃膜电极作为指示电极、饱和甘汞电极或饱和氯化银电极作为参比电极构成电解池。
+选择一项:
+对
+错
+正确答案是“错”。
+构成的应该是原电池。
+一般把电解池中发生还原反应的电极称为阳极。
+选择一项:
+对
+错。
+正确答案是“错”。
+（失阳氧，虱痒痒）
+根据电极反应机理不同，电极可分为()两大类
+a.金属基电极和参比电极
+b.金属基电极和膜电极
+c.金属基和非金属基电极</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="judgment">
+      <div class="card-header">
+        <span class="tag tag-judgment">判断题</span>
+        <span class="card-num">第 8 题</span>
+      </div>
+      <div class="card-title">参比电极的电极电位与待测离子浓度或活度呈能斯特响应。
+选择一项:</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, false, 'A', '对')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">对</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'B', '对')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">错</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：对</div>
+        <div class="answer-text">正确答案是“错”
+参比电极的核心特性是其电极电位在测量过程中保持恒定不变，它不随溶液中待测离子的浓度或活度变化而发生响应。这是其作为“参考基准”的根本原因。
+而能斯特响应是指示电极（如离子选择性电极）的特征，其电极电位与待测离子的活度（或浓度）的对数呈线性关系，符合能斯特方程。参比电极的电位值是已知且稳定的，它与指示电极共同构成原电池，通过测量电池的电动势，结合能斯特方程，从而计算出待测离子的活度或浓度。
+总离子强度调节缓冲液是为了使标准液和待测液中()不变。
+a.离子浓度
+b.离子强度
+C. 离子活度</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="choice">
+      <div class="card-header">
+        <span class="tag tag-choice">选择题</span>
+        <span class="card-num">第 16 题</span>
+      </div>
+      <div class="card-title">离子选择性电极是指对溶液中特定()有选择性响应能力的电极。</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, false, 'A', 'C')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">分子</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'B', 'C')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">电子</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, true, 'C', 'C')" data-label="C">
+          <div class="opt-letter">C</div>
+          <div class="opt-text">离子</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：C</div>
+        <div class="answer-text">正确答案是:离子</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="judgment">
+      <div class="card-header">
+        <span class="tag tag-judgment">判断题</span>
+        <span class="card-num">第 9 题</span>
+      </div>
+      <div class="card-title">pH玻璃膜电极的膜电位只包括内水化层与内参比溶液的相接电位。
+选择一项:</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, false, 'A', '')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">对</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'B', '')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">错</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：见解析</div>
+        <div class="answer-text">正确答案是“错”。</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="judgment">
+      <div class="card-header">
+        <span class="tag tag-judgment">判断题</span>
+        <span class="card-num">第 10 题</span>
+      </div>
+      <div class="card-title">在原子吸收法中，原子化不一定都要在高温下才能进行。()
+选择一项:</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, false, 'A', '对')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">对</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'B', '对')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">错</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：对</div>
+        <div class="answer-text">正确答案是“对”。
+在原子吸收分析中，某些元素可以与硼氢化物反应还原成极易挥发的氢化物，在以电加热或火焰加热的石英管原子化器中极易原子化，所以不一定高温。
+空心阴极灯工作电流越大，光源辐射的强度越大，测定的灵敏度越高。()
+选择一项:
+对
+错
+正确答案是“错”。
+空心阴极灯的电流太大，放电不稳，信噪比严重下降，灵敏度降低。
+原子化温度越高，基态气态原子密度越大。()
+选择一项:
+对
+错
+正确答案是“错”。
+在原子吸收光谱中,基态气态原子密度N0受温度影响很小,基本不随温度变化;即使温度过高，因为有电离存在。只会使基态原子数减少。
+原子吸收法测定易形成难离解氧化物的元素铝时，需采用的火焰为()
+a贫燃火焰
+b.化学计量性火焰
+c.氧气-空气
+d.富燃火焰</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="choice">
+      <div class="card-header">
+        <span class="tag tag-choice">选择题</span>
+        <span class="card-num">第 17 题</span>
+      </div>
+      <div class="card-title">空心阴极灯中对发射线宽度影响最大的因素( )</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, false, 'A', 'B')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">填充气体</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, true, 'B', 'B')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">灯电流</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'C', 'B')" data-label="C">
+          <div class="opt-letter">C</div>
+          <div class="opt-text">阴极材料</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'D', 'B')" data-label="D">
+          <div class="opt-letter">D</div>
+          <div class="opt-text">阳极材料</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：B</div>
+        <div class="answer-text">正确答案是:灯电流</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="choice">
+      <div class="card-header">
+        <span class="tag tag-choice">选择题</span>
+        <span class="card-num">第 18 题</span>
+      </div>
+      <div class="card-title">原子吸收分析中光源的作用是()</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, false, 'A', 'D')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">产生紫外光</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'B', 'D')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">提供试样蒸发和激发所需的能量</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'C', 'D')" data-label="C">
+          <div class="opt-letter">C</div>
+          <div class="opt-text">产生具有足够浓度的散射光</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, true, 'D', 'D')" data-label="D">
+          <div class="opt-letter">D</div>
+          <div class="opt-text">发射待测元素的特征谱线.</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：D</div>
+        <div class="answer-text">正确答案是:发射待测元素的特征谱线.</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="judgment">
+      <div class="card-header">
+        <span class="tag tag-judgment">判断题</span>
+        <span class="card-num">第 11 题</span>
+      </div>
+      <div class="card-title">采用标准加入法可以提高分析方法的灵敏度。()
+选择一项:</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, false, 'A', '对')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">对</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'B', '对')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">错</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：对</div>
+        <div class="answer-text">正确答案是“错”。
+标准加入法的测定中是在同一条件下进行,因此并不能提高分析方法的灵敏度,而它能消除基体干扰和某些化学干扰,故可以提高分析的准确度。
+在石墨炉原子化器中，应采用下列哪种气体作为保护气?()
+a.乙炔
+b.氢气
+c.氩
+d.氧化亚氮</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="choice">
+      <div class="card-header">
+        <span class="tag tag-choice">选择题</span>
+        <span class="card-num">第 19 题</span>
+      </div>
+      <div class="card-title">双光束原子吸收光度计不能消除的不稳定因素是( )</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, true, 'A', 'A')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">原子化器</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'B', 'A')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">放大器</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'C', 'A')" data-label="C">
+          <div class="opt-letter">C</div>
+          <div class="opt-text">光源</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'D', 'A')" data-label="D">
+          <div class="opt-letter">D</div>
+          <div class="opt-text">检测器</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：A</div>
+        <div class="answer-text">正确答案是:原子化器</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="choice">
+      <div class="card-header">
+        <span class="tag tag-choice">选择题</span>
+        <span class="card-num">第 20 题</span>
+      </div>
+      <div class="card-title">原子吸收分析中，吸光度最佳的测量范围是()</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, false, 'A', 'D')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">&gt;0.9</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'B', 'D')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">0.69~0.8</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'C', 'D')" data-label="C">
+          <div class="opt-letter">C</div>
+          <div class="opt-text">0.01~0.05</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, true, 'D', 'D')" data-label="D">
+          <div class="opt-letter">D</div>
+          <div class="opt-text">0.1~0.5</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：D</div>
+        <div class="answer-text">正确答案是::0.1~0.5</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="choice">
+      <div class="card-header">
+        <span class="tag tag-choice">选择题</span>
+        <span class="card-num">第 21 题</span>
+      </div>
+      <div class="card-title">根据朗伯-比尔定律，当吸光度A≈0.434时，由仪器读数误差引起的浓度相对误差最小。而实际分析中，为兼顾误差与灵敏度，通常将吸光度控制在0.1～0.5之间，此范围与紫外-可见分光光度法中的最佳读数范围（0.2～0.8）略有不同，原子吸收分析因信号特性及仪器响应要求，更倾向于更窄且偏低的吸光度区间。
+在原子吸收分析中，由于某元素含量太高，已进行了适当的稀释，但由于浓度高，测量结果仍偏离校正曲线，要改变这种情况，下列哪种方法可能是最有效的?()</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, true, 'A', 'A')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">将分析线改用非共振线</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'B', 'A')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">缩小读数标尺</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'C', 'A')" data-label="C">
+          <div class="opt-letter">C</div>
+          <div class="opt-text">改变标准系列浓度</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'D', 'A')" data-label="D">
+          <div class="opt-letter">D</div>
+          <div class="opt-text">继续稀释到能测量为止</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：A</div>
+        <div class="answer-text">正确答案是:将分析线改用非共振线</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="choice">
+      <div class="card-header">
+        <span class="tag tag-choice">选择题</span>
+        <span class="card-num">第 22 题</span>
+      </div>
+      <div class="card-title">可以消除原子吸收法中的物理干扰的方法是()</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, false, 'A', '')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">扣除背景</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'B', '')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">加入保护剂</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'C', '')" data-label="C">
+          <div class="opt-letter">C</div>
+          <div class="opt-text">加入释放剂</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'D', '')" data-label="D">
+          <div class="opt-letter">D</div>
+          <div class="opt-text">采用标准加入法”</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：见解析</div>
+        <div class="answer-text">正确答案是:采用标准加入法</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="choice">
+      <div class="card-header">
+        <span class="tag tag-choice">选择题</span>
+        <span class="card-num">第 23 题</span>
+      </div>
+      <div class="card-title">由原子无规则的热运动所产生的谱线变宽称为()</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, false, 'A', 'D')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">自然变度</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'B', 'D')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">赫尔兹马克变宽</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'C', 'D')" data-label="C">
+          <div class="opt-letter">C</div>
+          <div class="opt-text">劳伦茨变宽</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, true, 'D', 'D')" data-label="D">
+          <div class="opt-letter">D</div>
+          <div class="opt-text">多普勒变宽</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：D</div>
+        <div class="answer-text">正确答案是:多普勒变宽</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="judgment">
+      <div class="card-header">
+        <span class="tag tag-judgment">判断题</span>
+        <span class="card-num">第 12 题</span>
+      </div>
+      <div class="card-title">原子吸收线的宽度主要是多普勒变宽和洛伦兹变宽。()
+选择一项:</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, false, 'A', '对')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">对</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'B', '对')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">错</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：对</div>
+        <div class="answer-text">正确答案是“对”。
+在原子吸收法中，原子化器的分子吸收属于()
+a.物理干扰
+b光谱线重叠的干扰
+c.化学干扰
+d.背景吸收</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="judgment">
+      <div class="card-header">
+        <span class="tag tag-judgment">判断题</span>
+        <span class="card-num">第 13 题</span>
+      </div>
+      <div class="card-title">原子荧光法测量的是溶液中原子受激发产生的荧光
+选择一项：</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, false, 'A', '对')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">对</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'B', '对')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">错</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：对</div>
+        <div class="answer-text">正确答案是“错”。
+原子荧光法测量的是蒸气中原子受激发产生的荧光
+在原子荧光法中, 多数情况下使用的是
+a.阶跃荧光
+b.共振荧光
+c.敏化荧光
+d.直跃荧光</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="choice">
+      <div class="card-header">
+        <span class="tag tag-choice">选择题</span>
+        <span class="card-num">第 24 题</span>
+      </div>
+      <div class="card-title">原子荧光的量子效率是指</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, false, 'A', 'D')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">原子化器中离子浓度与原子浓度之比</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'B', 'D')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">激发态原子数与基态原子数之比</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'C', 'D')" data-label="C">
+          <div class="opt-letter">C</div>
+          <div class="opt-text">入射总光强与吸收后的光强之比</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, true, 'D', 'D')" data-label="D">
+          <div class="opt-letter">D</div>
+          <div class="opt-text">单位时间发射的光子数与单位时间吸收激发光的光子数之比</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：D</div>
+        <div class="answer-text">正确答案是：单位时间发射的光子数与单位时间吸收激发光的光子数之比</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="judgment">
+      <div class="card-header">
+        <span class="tag tag-judgment">判断题</span>
+        <span class="card-num">第 14 题</span>
+      </div>
+      <div class="card-title">原子荧光法中，原子化器的主要作用是将试样中待测元素转化为激发态原子。
+选择一项：</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, false, 'A', '对')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">对</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'B', '对')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">错</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：对</div>
+        <div class="answer-text">正确答案是“错”。
+原子荧光法中，原子化器的主要作用是将试样中待测元素转化为基态原子。
+下列常用光源中，产生自吸现象最小的是：
+a.电感耦合等离子体
+b.电火花
+c.交流电弧
+d.直流电弧</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="choice">
+      <div class="card-header">
+        <span class="tag tag-choice">选择题</span>
+        <span class="card-num">第 25 题</span>
+      </div>
+      <div class="card-title">以标准光谱比较法进行谱线检查、原子发射光谱定性分析时，通常依据的标准是：</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, false, 'A', 'B')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">氢谱</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, true, 'B', 'B')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">铁谱</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'C', 'B')" data-label="C">
+          <div class="opt-letter">C</div>
+          <div class="opt-text">碳谱</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'D', 'B')" data-label="D">
+          <div class="opt-letter">D</div>
+          <div class="opt-text">铜谱</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：B</div>
+        <div class="answer-text">正确答案是：铁谱</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="choice">
+      <div class="card-header">
+        <span class="tag tag-choice">选择题</span>
+        <span class="card-num">第 26 题</span>
+      </div>
+      <div class="card-title">使用ICP光源时，光谱观察高度一般在电感线圈之上15 – 20 mm，原因是：</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, false, 'A', 'C')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">此位置可避免产生自吸</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'B', 'C')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">此位置便于光谱仪进行摄谱</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, true, 'C', 'C')" data-label="C">
+          <div class="opt-letter">C</div>
+          <div class="opt-text">此位置的线背比大，背景小</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'D', 'C')" data-label="D">
+          <div class="opt-letter">D</div>
+          <div class="opt-text">此位置的温度高，试样激发完全</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：C</div>
+        <div class="answer-text">正确答案是：此位置的线背比大，背景小</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="choice">
+      <div class="card-header">
+        <span class="tag tag-choice">选择题</span>
+        <span class="card-num">第 27 题</span>
+      </div>
+      <div class="card-title">以光栅作单色器的色散元件，光栅面上单位距离内的刻痕线越少，则：</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, false, 'A', 'D')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">光谱色散率变大，分辨率增高</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'B', 'D')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">光谱色散率变大，分辨率降低</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'C', 'D')" data-label="C">
+          <div class="opt-letter">C</div>
+          <div class="opt-text">光谱色散率变小，分辨率增高</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, true, 'D', 'D')" data-label="D">
+          <div class="opt-letter">D</div>
+          <div class="opt-text">光谱色散率变小，分辨率降低</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：D</div>
+        <div class="answer-text">正确答案是：光谱色散率变小，分辨率降低</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="choice">
+      <div class="card-header">
+        <span class="tag tag-choice">选择题</span>
+        <span class="card-num">第 28 题</span>
+      </div>
+      <div class="card-title">在用二米光栅原子发射光谱仪摄谱获得的原子光谱感光板上，其谱线的间隔距离：</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, false, 'A', 'C')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">随谱线对应的波长增大而增大</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'B', 'C')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">随谱线对应的波长减小而减小</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, true, 'C', 'C')" data-label="C">
+          <div class="opt-letter">C</div>
+          <div class="opt-text">几乎不随谱线波长而减小或增大</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'D', 'C')" data-label="D">
+          <div class="opt-letter">D</div>
+          <div class="opt-text">随谱线对应的波长减小而增大</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：C</div>
+        <div class="answer-text">正确答案是：几乎不随谱线波长而减小或增大</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="choice">
+      <div class="card-header">
+        <span class="tag tag-choice">选择题</span>
+        <span class="card-num">第 29 题</span>
+      </div>
+      <div class="card-title">下列常用光源中，进行定量分析时，线性范围最大的是：</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, false, 'A', 'D')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">直流电弧</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'B', 'D')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">交流电弧</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'C', 'D')" data-label="C">
+          <div class="opt-letter">C</div>
+          <div class="opt-text">电火花</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, true, 'D', 'D')" data-label="D">
+          <div class="opt-letter">D</div>
+          <div class="opt-text">电感耦合等离子体</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：D</div>
+        <div class="answer-text">正确答案是：电感耦合等离子体</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="choice">
+      <div class="card-header">
+        <span class="tag tag-choice">选择题</span>
+        <span class="card-num">第 30 题</span>
+      </div>
+      <div class="card-title">原子发射光谱仪中光源的作用是：</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, false, 'A', 'D')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">提供足够能量使试样灰化、分解</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'B', 'D')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">提供特定波长和强度的锐线光谱</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'C', 'D')" data-label="C">
+          <div class="opt-letter">C</div>
+          <div class="opt-text">去除试样中的杂质，消除干扰</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, true, 'D', 'D')" data-label="D">
+          <div class="opt-letter">D</div>
+          <div class="opt-text">使被测元素熔融、蒸发、离解和激发</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：D</div>
+        <div class="answer-text">正确答案是：使被测元素熔融、蒸发、离解和激发</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="choice">
+      <div class="card-header">
+        <span class="tag tag-choice">选择题</span>
+        <span class="card-num">第 31 题</span>
+      </div>
+      <div class="card-title">不能采用原子发射光谱分析的物质是：</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, false, 'A', 'B')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">土壤和硅酸盐岩石中的过渡金属元素</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, true, 'B', 'B')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">有机物和大部分的非金属元素</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'C', 'B')" data-label="C">
+          <div class="opt-letter">C</div>
+          <div class="opt-text">碳铵复混肥料中的稀土元素</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'D', 'B')" data-label="D">
+          <div class="opt-letter">D</div>
+          <div class="opt-text">植物根茎中的碱金属和碱土金属</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：B</div>
+        <div class="answer-text">正确答案是：有机物和大部分的非金属元素</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="choice">
+      <div class="card-header">
+        <span class="tag tag-choice">选择题</span>
+        <span class="card-num">第 32 题</span>
+      </div>
+      <div class="card-title">下列常用光源中，激发温度最高的是：</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, true, 'A', 'A')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">电感耦合等离子体</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'B', 'A')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">电火花</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'C', 'A')" data-label="C">
+          <div class="opt-letter">C</div>
+          <div class="opt-text">交流电弧</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'D', 'A')" data-label="D">
+          <div class="opt-letter">D</div>
+          <div class="opt-text">直流电弧</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：A</div>
+        <div class="answer-text">正确答案是：电感耦合等离子体</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="choice">
+      <div class="card-header">
+        <span class="tag tag-choice">选择题</span>
+        <span class="card-num">第 33 题</span>
+      </div>
+      <div class="card-title">以下是ICP-MS仪器的组成部分是：
+选择一项或多项：</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, false, 'A', 'B')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">光栅</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, true, 'B', 'B')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">质量分析器</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'C', 'B')" data-label="C">
+          <div class="opt-letter">C</div>
+          <div class="opt-text">样品锥</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'D', 'B')" data-label="D">
+          <div class="opt-letter">D</div>
+          <div class="opt-text">电感耦合等离子体</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：B</div>
+        <div class="answer-text">E.电子倍增器（或打拿级）</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="choice">
+      <div class="card-header">
+        <span class="tag tag-choice">选择题</span>
+        <span class="card-num">第 34 题</span>
+      </div>
+      <div class="card-title">关于ICP-MS的使用，正确的是：
+选择一项或多项：</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, false, 'A', 'B')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">一般不采用内标法</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, true, 'B', 'B')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">仪器使用前通常先调谐</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'C', 'B')" data-label="C">
+          <div class="opt-letter">C</div>
+          <div class="opt-text">果冻样品可直接进样分析</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'D', 'B')" data-label="D">
+          <div class="opt-letter">D</div>
+          <div class="opt-text">蔬菜样品需要消解才能进样</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：B</div>
+        <div class="answer-text">E.主要干扰是质谱干扰和基体干扰</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="choice">
+      <div class="card-header">
+        <span class="tag tag-choice">选择题</span>
+        <span class="card-num">第 35 题</span>
+      </div>
+      <div class="card-title">关于ICP-MS的说法，正确的是：
+选择一项或多项：</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, false, 'A', 'B')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">线性范围很窄</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, true, 'B', 'B')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">可多元素同时检测</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'C', 'B')" data-label="C">
+          <div class="opt-letter">C</div>
+          <div class="opt-text">灵敏度高</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'D', 'B')" data-label="D">
+          <div class="opt-letter">D</div>
+          <div class="opt-text">分析成本较高</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：B</div>
+        <div class="answer-text">E.可测定同位素比值</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="judgment">
+      <div class="card-header">
+        <span class="tag tag-judgment">判断题</span>
+        <span class="card-num">第 15 题</span>
+      </div>
+      <div class="card-title">ICP-MS灵敏度低于ICP-AES（或ICP-OES）。
+选择一项：</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, false, 'A', '对')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">对</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'B', '对')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">错</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：对</div>
+        <div class="answer-text">正确答案是“错”。
+ICP-MS灵敏度远高于ICP-AES（或ICP-OES）。
+CP-MS和原子吸收光谱法一样，可实现多元素同时分析。
+选择一项：
+对
+错
+正确答案是“错”。
+原子吸收光谱法由于光源（空心阴极灯）限制，较难实现多元素同时分析。
+根据ICP的原理，请判断进行ICP-MS分析时，以下哪种元素检测灵敏度最高（）
+a.Cu
+b.F
+c.S
+d.P
+反馈</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="choice">
+      <div class="card-header">
+        <span class="tag tag-choice">选择题</span>
+        <span class="card-num">第 36 题</span>
+      </div>
+      <div class="card-title">原子质谱分析时，若检测所需分辨率很高，应选择以下哪一种质量分析器（）</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, false, 'A', 'C')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">四级杆质量分析器</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'B', 'C')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">离子阱质量分析器</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, true, 'C', 'C')" data-label="C">
+          <div class="opt-letter">C</div>
+          <div class="opt-text">双聚焦质量分析器</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'D', 'C')" data-label="D">
+          <div class="opt-letter">D</div>
+          <div class="opt-text">单聚焦磁扇形质量分析器</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：C</div>
+        <div class="answer-text">正确答案是：双聚焦质量分析器</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="choice">
+      <div class="card-header">
+        <span class="tag tag-choice">选择题</span>
+        <span class="card-num">第 37 题</span>
+      </div>
+      <div class="card-title">以下能消除ICP-MS质谱干扰的手段是（）</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, false, 'A', 'B')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">标准加入法</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, true, 'B', 'B')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">选择无干扰的同位素</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'C', 'B')" data-label="C">
+          <div class="opt-letter">C</div>
+          <div class="opt-text">内标法</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'D', 'B')" data-label="D">
+          <div class="opt-letter">D</div>
+          <div class="opt-text">稀释样品</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：B</div>
+        <div class="answer-text">正确答案是：选择无干扰的同位素</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="choice">
+      <div class="card-header">
+        <span class="tag tag-choice">选择题</span>
+        <span class="card-num">第 38 题</span>
+      </div>
+      <div class="card-title">关于ICP-MS与ICP-AES两种技术对比，以下描述错误的是（）</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, false, 'A', 'C')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">ICP-MS和ICP-AES都可以实现多元素同时分析</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'B', 'C')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">ICP-MS方法的检出限一般低于ICP-AES</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, true, 'C', 'C')" data-label="C">
+          <div class="opt-letter">C</div>
+          <div class="opt-text">ICP-AES的谱图比ICP-MS的更简单</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'D', 'C')" data-label="D">
+          <div class="opt-letter">D</div>
+          <div class="opt-text">ICP-MS比ICP-AES分析成本更高</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：C</div>
+        <div class="answer-text">正确答案是：ICP-AES的谱图比ICP-MS的更简单</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="judgment">
+      <div class="card-header">
+        <span class="tag tag-judgment">判断题</span>
+        <span class="card-num">第 16 题</span>
+      </div>
+      <div class="card-title">原子发射光谱图比质谱图更复杂
+ICP-MS分析时，内标元素最好选择样品中包含的元素。
+选择一项：</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, false, 'A', '')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">对</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'B', '')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">错</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：见解析</div>
+        <div class="answer-text">正确答案是“错”。</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="choice">
+      <div class="card-header">
+        <span class="tag tag-choice">选择题</span>
+        <span class="card-num">第 39 题</span>
+      </div>
+      <div class="card-title">题目：
+Van Deemter方程中，分子扩散项</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, false, 'A', 'B')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">与担体粒度直径成正比</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, true, 'B', 'B')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">与载气平均线速度成反比</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'C', 'B')" data-label="C">
+          <div class="opt-letter">C</div>
+          <div class="opt-text">与组分在载气中扩散系数成反比 d 与气体扩散路径弯曲因数成反比</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：B</div>
+        <div class="answer-text">e 以上都不是</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="choice">
+      <div class="card-header">
+        <span class="tag tag-choice">选择题</span>
+        <span class="card-num">第 40 题</span>
+      </div>
+      <div class="card-title">两组分在同一固定相上分离的可能性与哪个因素无关?</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, true, 'A', 'A')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">检测器灵敏度的高低</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'B', 'A')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">分配次数的多少 c 选择性的大小</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'D', 'A')" data-label="D">
+          <div class="opt-letter">D</div>
+          <div class="opt-text">分配系数之差的大小</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：A</div>
+        <div class="answer-text">正确答案是：检测器灵敏度的高低</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="choice">
+      <div class="card-header">
+        <span class="tag tag-choice">选择题</span>
+        <span class="card-num">第 41 题</span>
+      </div>
+      <div class="card-title">以下参数哪个可用于定量分析()</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, false, 'A', 'B')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">保留值</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, true, 'B', 'B')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">峰面积</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：B</div>
+        <div class="answer-text">c。分配系数
+d. 分配比</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="choice">
+      <div class="card-header">
+        <span class="tag tag-choice">选择题</span>
+        <span class="card-num">第 42 题</span>
+      </div>
+      <div class="card-title">半峰宽是指峰底宽度的一半</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, true, 'A', 'A')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">正确</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'B', 'A')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">错</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：A</div>
+        <div class="answer-text">正确答案是：错误</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="choice">
+      <div class="card-header">
+        <span class="tag tag-choice">选择题</span>
+        <span class="card-num">第 43 题</span>
+      </div>
+      <div class="card-title">在气相色谱分析中，根据范弟姆特方程式，在高流速情况下，影响柱效的因素主要是</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, true, 'A', 'A')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">传质阻力</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：A</div>
+        <div class="answer-text">b。柱弯曲因子
+c. 涡流扩散
+d。纵向扩散</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="choice">
+      <div class="card-header">
+        <span class="tag tag-choice">选择题</span>
+        <span class="card-num">第 44 题</span>
+      </div>
+      <div class="card-title">塔板理论不能用于</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, true, 'A', 'A')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">解释色谱流出曲线的宽度与哪些因素有关</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'B', 'A')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">塔板数计算</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'C', 'A')" data-label="C">
+          <div class="opt-letter">C</div>
+          <div class="opt-text">解释色谱流出曲线的形状</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'D', 'A')" data-label="D">
+          <div class="opt-letter">D</div>
+          <div class="opt-text">塔板高度计算</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：A</div>
+        <div class="answer-text">正确答案是：解释色谱流出曲线的宽度与哪些因素有关</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="choice">
+      <div class="card-header">
+        <span class="tag tag-choice">选择题</span>
+        <span class="card-num">第 45 题</span>
+      </div>
+      <div class="card-title">塔板理论的贡献之一是</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, false, 'A', '')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">解释了色谱峰展宽的原因</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'B', '')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">解释了色谱峰的形状符合正态分布的原因</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'C', '')" data-label="C">
+          <div class="opt-letter">C</div>
+          <div class="opt-text">说明气相色谱分离效能高的原因</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'D', '')" data-label="D">
+          <div class="opt-letter">D</div>
+          <div class="opt-text">提出了四个假设</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：见解析</div>
+        <div class="answer-text">正确答案是：解释了色谱峰的形状符合正态分布</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="choice">
+      <div class="card-header">
+        <span class="tag tag-choice">选择题</span>
+        <span class="card-num">第 46 题</span>
+      </div>
+      <div class="card-title">影响色谱柱的选择性的参数是</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, false, 'A', 'C')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">死时间</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'B', 'C')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">分离度R</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, true, 'C', 'C')" data-label="C">
+          <div class="opt-letter">C</div>
+          <div class="opt-text">固定相</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'D', 'C')" data-label="D">
+          <div class="opt-letter">D</div>
+          <div class="opt-text">理论塔板数n</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：C</div>
+        <div class="answer-text">e 保留时间tR</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="choice">
+      <div class="card-header">
+        <span class="tag tag-choice">选择题</span>
+        <span class="card-num">第 47 题</span>
+      </div>
+      <div class="card-title">某试样的色谱图上出现三个峰，则该试样中最多有三个组分。</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, true, 'A', 'A')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">正确</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'B', 'A')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">错误</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：A</div>
+        <div class="answer-text">正确答案是：错误</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="choice">
+      <div class="card-header">
+        <span class="tag tag-choice">选择题</span>
+        <span class="card-num">第 48 题</span>
+      </div>
+      <div class="card-title">根据范蒂姆特方程，判断当载气流速偏离最佳流速时，色谱柱效能随不同影响因素变化的描述，正确的是</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, false, 'A', '')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">当实际流速小于最佳流速时，组分的传质阻</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：见解析</div>
+        <div class="answer-text">力项是影响柱效能的主要因素
+b 当实际流速大于最佳流速时，组分的涡流扩
+散项是影响柱效能的主要因素
+c 当实际流速大于最佳流速时，组分的各项因
+素同时增大
+d 当实际流速小于最佳流速时，组分的分子
+扩散项是影响柱效能的主要因素</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="choice">
+      <div class="card-header">
+        <span class="tag tag-choice">选择题</span>
+        <span class="card-num">第 49 题</span>
+      </div>
+      <div class="card-title">气液色谱的分离机理是基于组分在两相间反复多次的吸附与脱附，气固色谱分离是基于组分在两相间反复多次的分配</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, true, 'A', 'A')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">错</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'B', 'A')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">对</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：A</div>
+        <div class="answer-text">正确答案是：错</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="choice">
+      <div class="card-header">
+        <span class="tag tag-choice">选择题</span>
+        <span class="card-num">第 50 题</span>
+      </div>
+      <div class="card-title">气相色谱中调整保留时间是指组分从进样到出现峰最大值所需的时间。</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, true, 'A', 'A')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">错误</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'B', 'A')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">正确</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：A</div>
+        <div class="answer-text">正确答案是：错误</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="choice">
+      <div class="card-header">
+        <span class="tag tag-choice">选择题</span>
+        <span class="card-num">第 51 题</span>
+      </div>
+      <div class="card-title">液相色谱中引起色谱峰扩展的主要原因是分子扩散项</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, true, 'A', 'A')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">错</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'B', 'A')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">对</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：A</div>
+        <div class="answer-text">正确答案是：错</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="choice">
+      <div class="card-header">
+        <span class="tag tag-choice">选择题</span>
+        <span class="card-num">第 52 题</span>
+      </div>
+      <div class="card-title">用于色谱定性分析的参数是</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, false, 'A', 'B')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">固定相</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, true, 'B', 'B')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">保留时间tR</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'C', 'B')" data-label="C">
+          <div class="opt-letter">C</div>
+          <div class="opt-text">理论塔板数n</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'D', 'B')" data-label="D">
+          <div class="opt-letter">D</div>
+          <div class="opt-text">死时间</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：B</div>
+        <div class="answer-text">e 分离度R</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="choice">
+      <div class="card-header">
+        <span class="tag tag-choice">选择题</span>
+        <span class="card-num">第 53 题</span>
+      </div>
+      <div class="card-title">色谱图中保留参数&quot;保留时间&quot;的正确含义是</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, false, 'A', 'C')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">所有组分流经色谱柱所需时间</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'B', 'C')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">个别组分流经色谱柱所需时间</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, true, 'C', 'C')" data-label="C">
+          <div class="opt-letter">C</div>
+          <div class="opt-text">待测组分流经色谱柱所需时间</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：C</div>
+        <div class="answer-text">d。完全不与固定相作用的组分流经色谱柱所需
+时间</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="choice">
+      <div class="card-header">
+        <span class="tag tag-choice">选择题</span>
+        <span class="card-num">第 54 题</span>
+      </div>
+      <div class="card-title">色谱图中保留参数&quot;死时间&quot;的正确含义是</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, false, 'A', '')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">所有组分流经色谱柱所需时间 b。个别组分流经色谱柱所需时间</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：见解析</div>
+        <div class="answer-text">c。完全不与固定相作用的组分流经色谱柱所
+需时间
+d. 待测组分流经色谱柱所需时间</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="choice">
+      <div class="card-header">
+        <span class="tag tag-choice">选择题</span>
+        <span class="card-num">第 55 题</span>
+      </div>
+      <div class="card-title">评价色谱柱效能的指标是</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, true, 'A', 'A')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">理论塔板数n</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'B', 'A')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">固定相</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'C', 'A')" data-label="C">
+          <div class="opt-letter">C</div>
+          <div class="opt-text">死时间</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'D', 'A')" data-label="D">
+          <div class="opt-letter">D</div>
+          <div class="opt-text">保留时间tR</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：A</div>
+        <div class="answer-text">e. 分离度R</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="choice">
+      <div class="card-header">
+        <span class="tag tag-choice">选择题</span>
+        <span class="card-num">第 56 题</span>
+      </div>
+      <div class="card-title">它只对含碳的有机化合物具有响应，尤其对碳氢化合物响应良好。其工作原理是基于有机物在氢火焰中燃烧产生离子，从而形成电流信号。因此，它属于选择性检测器，而非通用型检测器。
+GC的分离原理是基于分配系数K 的大小，对于气-固色谱法而言，各组分之间的分离是依据于</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, false, 'A', 'B')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">熔点的高低</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, true, 'B', 'B')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">吸附能力大小</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'C', 'B')" data-label="C">
+          <div class="opt-letter">C</div>
+          <div class="opt-text">溶解能力大小</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'D', 'B')" data-label="D">
+          <div class="opt-letter">D</div>
+          <div class="opt-text">沸点的高低</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：B</div>
+        <div class="answer-text">正确答案是：吸附能力大小</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="choice">
+      <div class="card-header">
+        <span class="tag tag-choice">选择题</span>
+        <span class="card-num">第 57 题</span>
+      </div>
+      <div class="card-title">（可以看回导论的分类）
+一般气相色谱法适用于</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, true, 'A', 'A')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">无腐蚀性气体与在气化温度下可以气化的液体的分离与测定</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'B', 'A')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">任何有机和无机化合物的分离测定</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'C', 'A')" data-label="C">
+          <div class="opt-letter">C</div>
+          <div class="opt-text">无腐蚀性气体与易挥发的液体和固体的分离与测定</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'D', 'A')" data-label="D">
+          <div class="opt-letter">D</div>
+          <div class="opt-text">任何气体的测定</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：A</div>
+        <div class="answer-text">正确答案是：无腐蚀性气体与在气化温度下可以气化的液体的分离与测定</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="choice">
+      <div class="card-header">
+        <span class="tag tag-choice">选择题</span>
+        <span class="card-num">第 58 题</span>
+      </div>
+      <div class="card-title">其适用对象需满足两个关键条件：无腐蚀性和在气化温度下可气化且不分解。
+依据待测组分的导热系数不同而进行检测的气相色谱检测器是</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, false, 'A', 'B')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">火焰光度检测器</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, true, 'B', 'B')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">热导检测器</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'C', 'B')" data-label="C">
+          <div class="opt-letter">C</div>
+          <div class="opt-text">电子捕获检测器</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'D', 'B')" data-label="D">
+          <div class="opt-letter">D</div>
+          <div class="opt-text">火焰离子化检测器</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：B</div>
+        <div class="answer-text">正确答案是：热导检测器</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="judgment">
+      <div class="card-header">
+        <span class="tag tag-judgment">判断题</span>
+        <span class="card-num">第 17 题</span>
+      </div>
+      <div class="card-title">分析混合烷烃试样时，可选择极性固定相，按沸点大小顺序出峰。</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, false, 'A', '错')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">错误</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'B', '错')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">正确</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：错</div>
+        <div class="answer-text">正确答案是：错误</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="choice">
+      <div class="card-header">
+        <span class="tag tag-choice">选择题</span>
+        <span class="card-num">第 59 题</span>
+      </div>
+      <div class="card-title">混合烷烃属于非极性化合物，其分离应遵循“相似相溶”原则，即选择非极性固定相进行分析。在非极性固定相上，各组分的保留行为主要取决于其沸点差异：沸点越低的组分，挥发性越强，在气相中分配比例越高，因此先流出色谱柱；沸点越高的组分，保留时间越长，后流出。
+因此，分析混合烷烃试样时，不应选择极性固定相，而应选择非极性固定相，并按沸点由低到高的顺序出峰。
+分离有机胺时，最好选用的气相色谱柱固定液为</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, false, 'A', 'C')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">非极性固定液</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'B', 'C')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">混合固定液</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, true, 'C', 'C')" data-label="C">
+          <div class="opt-letter">C</div>
+          <div class="opt-text">氢键型固定液</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'D', 'C')" data-label="D">
+          <div class="opt-letter">D</div>
+          <div class="opt-text">高沸点固定液</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：C</div>
+        <div class="answer-text">正确答案是：氢键型固定液</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="choice">
+      <div class="card-header">
+        <span class="tag tag-choice">选择题</span>
+        <span class="card-num">第 60 题</span>
+      </div>
+      <div class="card-title">有机胺分子结构中含有氨基（-NH₂），具有形成氢键的能力，属于极性或氢键型化合物。在气相色谱中，固定液的选择需遵循“相似相溶”原则，即固定液与待分离组分在极性或相互作用类型上应匹配，以实现有效分离。
+氢键型固定液能够与有机胺分子中的氨基形成氢键，从而增强固定液对有机胺的保留作用，提高选择性，使不同有机胺组分在色谱柱中具有不同的保留时间，从而实现分离。
+在气-液色谱分析中, 色谱柱中的固定相为</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, false, 'A', 'B')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">一般固体物质</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, true, 'B', 'B')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">载体及固定液</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'C', 'B')" data-label="C">
+          <div class="opt-letter">C</div>
+          <div class="opt-text">载体</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'D', 'B')" data-label="D">
+          <div class="opt-letter">D</div>
+          <div class="opt-text">固体吸附剂</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：B</div>
+        <div class="answer-text">正确答案是：载体及固定液</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="choice">
+      <div class="card-header">
+        <span class="tag tag-choice">选择题</span>
+        <span class="card-num">第 61 题</span>
+      </div>
+      <div class="card-title">在气相色谱分析中，影响组分之间分离程度的最大因素是</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, true, 'A', 'A')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">柱温</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'B', 'A')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">进样量</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'C', 'A')" data-label="C">
+          <div class="opt-letter">C</div>
+          <div class="opt-text">载体粒度</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'D', 'A')" data-label="D">
+          <div class="opt-letter">D</div>
+          <div class="opt-text">气化室温度</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：A</div>
+        <div class="answer-text">正确答案是：柱温</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="choice">
+      <div class="card-header">
+        <span class="tag tag-choice">选择题</span>
+        <span class="card-num">第 62 题</span>
+      </div>
+      <div class="card-title">在气相色谱分析中，柱温是影响组分之间分离程度的最关键操作参数。其核心原因在于：柱温直接调控组分在固定相与流动相之间的分配系数，进而影响其在色谱柱中的保留行为和选择性。温度升高时，组分挥发性增强，保留时间缩短，分析速度加快，但分离选择性可能下降；温度降低则增强组分在固定相中的溶解度，提高分离选择性，使相邻峰更易分开，但分析时间延长。因此，柱温需根据样品沸点范围、固定液性质及检测灵敏度进行优化，以实现最佳分离效果。
+相比之下：
+进样量：主要影响峰形和柱效，过量会导致峰展宽、拖尾或柱超载，但并非决定分离程度的首要因素。
+载体粒度：影响柱效和理论塔板数，粒度越小分离效率越高，但其影响通常次于柱温对选择性的调控。
+气化室温度：主要确保样品瞬间完全汽化，避免峰形畸变，对分离度影响较小。
+综上，在所列选项中，柱温是影响组分分离程度的最大因素。
+在气相色谱法中，对乙醇有很高灵敏度的检测器是</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, false, 'A', 'B')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">电子捕获检测器</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, true, 'B', 'B')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">氢火焰离子化检测器</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'C', 'B')" data-label="C">
+          <div class="opt-letter">C</div>
+          <div class="opt-text">氮磷检测器</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'D', 'B')" data-label="D">
+          <div class="opt-letter">D</div>
+          <div class="opt-text">火焰光度检测器</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：B</div>
+        <div class="answer-text">正确答案是：氢火焰离子化检测器</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="choice">
+      <div class="card-header">
+        <span class="tag tag-choice">选择题</span>
+        <span class="card-num">第 63 题</span>
+      </div>
+      <div class="card-title">在气相色谱法中，调整保留值实际上反映出了（ ）的分子间的相互作用</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, true, 'A', 'A')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">组分与固定相</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'B', 'A')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">载气与固定相</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'C', 'A')" data-label="C">
+          <div class="opt-letter">C</div>
+          <div class="opt-text">组分与载气</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'D', 'A')" data-label="D">
+          <div class="opt-letter">D</div>
+          <div class="opt-text">组分与组分</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：A</div>
+        <div class="answer-text">正确答案是：组分与固定相</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="choice">
+      <div class="card-header">
+        <span class="tag tag-choice">选择题</span>
+        <span class="card-num">第 64 题</span>
+      </div>
+      <div class="card-title">在气相谱法中，对大多数有机化合物有很高灵敏度的检测器是</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, true, 'A', 'A')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">氢火焰离子化检测器</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'B', 'A')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">电子捕获检测器</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'C', 'A')" data-label="C">
+          <div class="opt-letter">C</div>
+          <div class="opt-text">氮磷检测器</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'D', 'A')" data-label="D">
+          <div class="opt-letter">D</div>
+          <div class="opt-text">火焰光度检测器</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：A</div>
+        <div class="answer-text">正确答案是：氢火焰离子化检测器</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="choice">
+      <div class="card-header">
+        <span class="tag tag-choice">选择题</span>
+        <span class="card-num">第 65 题</span>
+      </div>
+      <div class="card-title">在没有纯标准品时采用哪种方法进行定性分析</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, true, 'A', 'A')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">保留值对照法</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'B', 'A')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">增加峰高法</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'C', 'A')" data-label="C">
+          <div class="opt-letter">C</div>
+          <div class="opt-text">标准曲线法</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'D', 'A')" data-label="D">
+          <div class="opt-letter">D</div>
+          <div class="opt-text">归一化法</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：A</div>
+        <div class="answer-text">e.直接比较法</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="choice">
+      <div class="card-header">
+        <span class="tag tag-choice">选择题</span>
+        <span class="card-num">第 66 题</span>
+      </div>
+      <div class="card-title">当试样中各组分无法全部出峰，或仅需对其中某几个特定组分进行定量分析时，内标法和外标法（即标准工作曲线法）是适用的。而面积归一化法要求所有组分都必须出峰并能被检测，因此不适用于本题情境。
+对所有物质均有响应的气相色谱检测器是</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, false, 'A', 'C')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">紫外检测器</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'B', 'C')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">FID检测器</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, true, 'C', 'C')" data-label="C">
+          <div class="opt-letter">C</div>
+          <div class="opt-text">热导检测器</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'D', 'C')" data-label="D">
+          <div class="opt-letter">D</div>
+          <div class="opt-text">电导检测器</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：C</div>
+        <div class="answer-text">正确答案是：热导检测器</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="choice">
+      <div class="card-header">
+        <span class="tag tag-choice">选择题</span>
+        <span class="card-num">第 67 题</span>
+      </div>
+      <div class="card-title">在气相色谱技术中，热导检测器（TCD） 是唯一一种对几乎所有物质都能产生响应信号的通用型检测器。其工作原理基于不同物质具有不同的热导率，当载气中混入待测组分时，检测器热丝的温度和电阻会因热导率变化而改变，从而产生可测量的电信号。
+相比之下：
+FID检测器（火焰离子化检测器）仅对含碳有机物有响应，对无机气体、水、二氧化碳等无响应；
+紫外检测器主要用于液相色谱，不适用于常规气相色谱；
+电导检测器多用于离子色谱，不用于气相色谱。
+将纯苯与组分i配成混合液进行气相色谱分析，测得当纯苯注入量为0.435μg时的峰面积为4.00平方厘米，组分i注入量为0.653μg时的峰面积为6.50平方厘米，当组分i以纯苯为标准时，相对定量校正因子是</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, false, 'A', 'C')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">1.08</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'B', 'C')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">2.44</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, true, 'C', 'C')" data-label="C">
+          <div class="opt-letter">C</div>
+          <div class="opt-text">0.924</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'D', 'C')" data-label="D">
+          <div class="opt-letter">D</div>
+          <div class="opt-text">0.462</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：C</div>
+        <div class="answer-text">正确答案是：0.924</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="choice">
+      <div class="card-header">
+        <span class="tag tag-choice">选择题</span>
+        <span class="card-num">第 68 题</span>
+      </div>
+      <div class="card-title">1. 关键概念与公式
+相对定量校正因子（  ）是组分  的校正因子与标准物质（纯苯）的校正因子的比值，用于消除不同物质在检测器上响应差异的影响。
+校正因子（  ）的定义为：单位峰面积对应的物质质量，即  （  为质量，  为峰面积）。
+因此，相对定量校正因子的公式为：（我个人比较喜欢直接理解记忆红色那一步就完了）
+其中：
+：组分  的质量（0.653μg）；
+：组分  的峰面积（6.50 cm²）；
+：标准物质（纯苯）的质量（0.435μg）；
+：标准物质的峰面积（4.00 cm²）。
+2. 代入数据计算
+将题目中的数据代入公式：
+因此：
+结论：相对定量校正因子为0.924，对应选项c。
+有机物在氢火焰中燃烧生成的离子，在电场作用下能产生电讯号的部件是</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, true, 'A', 'A')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">火焰离子化检测器</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'B', 'A')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">热导检测器</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'C', 'A')" data-label="C">
+          <div class="opt-letter">C</div>
+          <div class="opt-text">火焰光度检测器</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'D', 'A')" data-label="D">
+          <div class="opt-letter">D</div>
+          <div class="opt-text">电子捕获检测器</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：A</div>
+        <div class="answer-text">正确答案是：火焰离子化检测器</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="choice">
+      <div class="card-header">
+        <span class="tag tag-choice">选择题</span>
+        <span class="card-num">第 69 题</span>
+      </div>
+      <div class="card-title">题干描述的是有机物在氢火焰中燃烧生成离子，并在电场作用下产生电信号的检测部件。其核心机制是化学电离与离子定向移动形成电流。
+火焰离子化检测器（FID）：正是基于这一原理设计的。当含碳有机物进入氢-氧火焰时，在高温下发生裂解和化学电离，产生大量正离子和电子。在电场作用下，这些带电粒子向两极定向移动，形成微弱的离子流（约10⁻¹²～10⁻⁸ A），经高阻放大后可被检测，其信号强度与进入火焰的有机物质量成正比。因此，FID是专门用于检测有机物在氢焰中电离产生电信号的部件。
+热导检测器：基于不同气体导热系数差异工作，不涉及离子化和电场作用。
+火焰光度检测器：基于特定元素（如S、P）在火焰中激发发光，检测的是光信号而非离子电流。
+电子捕获检测器：依赖电负性物质捕获电子形成电流变化，与氢焰中有机物电离无关。
+校正因子f与下列哪个因素无关</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, false, 'A', 'B')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">检测器类型</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, true, 'B', 'B')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">载气流速</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'C', 'B')" data-label="C">
+          <div class="opt-letter">C</div>
+          <div class="opt-text">基准物</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'D', 'B')" data-label="D">
+          <div class="opt-letter">D</div>
+          <div class="opt-text">被测试样</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：B</div>
+        <div class="answer-text">正确答案是：载气流速</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="choice">
+      <div class="card-header">
+        <span class="tag tag-choice">选择题</span>
+        <span class="card-num">第 70 题</span>
+      </div>
+      <div class="card-title">校正因子是气相色谱定量分析中的重要参数，其本质是被测组分与标准物质在检测器上的响应值之比。根据定义与实验规律，校正因子主要取决于以下三类因素：
+检测器类型：不同检测器对同一物质的响应灵敏度不同，因此校正因子随检测器种类变化。
+基准物质（标准物质）：校正因子是相对值，必须相对于一个选定的标准物质（如正庚烷、苯等）进行计算，其数值依赖于所选标准物。
+被测试样：不同组分的物理化学性质不同，其在检测器上的响应行为也不同，因此校正因子与具体被测组分相关。
+而载气流速属于操作条件，它影响的是峰形、保留时间及分离效率，但不改变检测器对物质的相对响应比例，因此不影响校正因子的数值。
+综上，在所列选项中，载气流速与校正因子无关。
+气相色谱法中，调整保留值反映了哪些分子间的相互作用？</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, false, 'A', 'B')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">组分与组分</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, true, 'B', 'B')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">组分与固定相</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'C', 'B')" data-label="C">
+          <div class="opt-letter">C</div>
+          <div class="opt-text">组分与载气和固定相</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'D', 'B')" data-label="D">
+          <div class="opt-letter">D</div>
+          <div class="opt-text">组分与载气</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：B</div>
+        <div class="answer-text">正确答案是：组分与固定相</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="judgment">
+      <div class="card-header">
+        <span class="tag tag-judgment">判断题</span>
+        <span class="card-num">第 18 题</span>
+      </div>
+      <div class="card-title">程序升温色谱法主要是通过选择适当温度，而获得良好的分离和峰形，且总分析时间比恒温色谱要短。</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, false, 'A', '对')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">正确</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'B', '对')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">错误</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：对</div>
+        <div class="answer-text">正确答案是：正确</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="choice">
+      <div class="card-header">
+        <span class="tag tag-choice">选择题</span>
+        <span class="card-num">第 71 题</span>
+      </div>
+      <div class="card-title">采用色谱归一化法定量的基础是试样中所有组分都出峰</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, false, 'A', 'B')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">错</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, true, 'B', 'B')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">对</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：B</div>
+        <div class="answer-text">正确答案是：对</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="choice">
+      <div class="card-header">
+        <span class="tag tag-choice">选择题</span>
+        <span class="card-num">第 72 题</span>
+      </div>
+      <div class="card-title">HPLC与GC相比，可以忽略纵向扩散项，这是由于</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, true, 'A', 'A')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">流动相的黏度比较大</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'B', 'A')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">柱前压力高</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'C', 'A')" data-label="C">
+          <div class="opt-letter">C</div>
+          <div class="opt-text">流速比GC快</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'D', 'A')" data-label="D">
+          <div class="opt-letter">D</div>
+          <div class="opt-text">柱温低</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：A</div>
+        <div class="answer-text">正确答案是：流动相的黏度比较大</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="choice">
+      <div class="card-header">
+        <span class="tag tag-choice">选择题</span>
+        <span class="card-num">第 73 题</span>
+      </div>
+      <div class="card-title">回色谱法导论看范蒂姆特方程：纵向扩散项是色谱理论中范第姆特方程（Van Deemter equation）里的一个重要组成部分，通常用 B/u 来表示。
+它描述的是：由于色谱柱内存在浓度梯度，被分析的组分分子会自发地从高浓度区域向低浓度区域扩散，这种沿着流动方向的扩散会导致色谱峰变宽，从而降低分离效率。
+HPLC可以忽略纵向扩散项，根本原因在于其流动相是液体，黏度远大于GC中的气体流动相。
+根据分子扩散的物理原理，物质在介质中的扩散系数（Dm）与该介质的黏度（η）成反比。简单来说，介质越“粘稠”，分子在里面就越难移动和扩散。
+HPLC（液相色谱）： 流动相是液体，黏度很高。因此，溶质分子在液体中的扩散系数非常小（大约是气体中的十万分之一）。这导致由纵向扩散引起的峰展宽效应微乎其微，可以被忽略。
+GC（气相色谱）： 流动相是气体，黏度极低。溶质分子在气体中可以非常自由和快速地扩散，因此纵向扩散是导致色谱峰展宽的一个主要因素，绝对不能忽略。
+下列不是高效液相色谱仪组成的是</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, true, 'A', 'A')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">氢火焰离子化检测器</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'B', 'A')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">色谱柱</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'C', 'A')" data-label="C">
+          <div class="opt-letter">C</div>
+          <div class="opt-text">紫外检测器</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'D', 'A')" data-label="D">
+          <div class="opt-letter">D</div>
+          <div class="opt-text">六通阀</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：A</div>
+        <div class="answer-text">正确答案是：氢火焰离子化检测器</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="choice">
+      <div class="card-header">
+        <span class="tag tag-choice">选择题</span>
+        <span class="card-num">第 74 题</span>
+      </div>
+      <div class="card-title">不是高液相色谱仪中的检测器是</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, false, 'A', 'D')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">差示折光检测</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'B', 'D')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">电导检测器</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'C', 'D')" data-label="C">
+          <div class="opt-letter">C</div>
+          <div class="opt-text">紫外吸收检测器</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, true, 'D', 'D')" data-label="D">
+          <div class="opt-letter">D</div>
+          <div class="opt-text">红外检测器</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：D</div>
+        <div class="answer-text">正确答案是：红外检测器</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="choice">
+      <div class="card-header">
+        <span class="tag tag-choice">选择题</span>
+        <span class="card-num">第 75 题</span>
+      </div>
+      <div class="card-title">红外检测器并非高效液相色谱仪的标准或常用检测器。其原理依赖于分子对红外光的特征吸收，通常用于气相或固相红外光谱分析，不适用于常规HPLC系统，因为流动相（尤其是水）在红外区有强吸收，会严重干扰检测，且HPLC流出物难以直接进行红外光谱采集。
+在液相色谱中, 某组分的保留值大小实际反映了哪些部分的分子间作用力</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, true, 'A', 'A')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">组分与流动相</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'B', 'A')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">组分与组分</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'C', 'A')" data-label="C">
+          <div class="opt-letter">C</div>
+          <div class="opt-text">组分与流动相和固定相</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'D', 'A')" data-label="D">
+          <div class="opt-letter">D</div>
+          <div class="opt-text">组分与固定相</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：A</div>
+        <div class="answer-text">正确答案是：组分与流动相和固定相</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="choice">
+      <div class="card-header">
+        <span class="tag tag-choice">选择题</span>
+        <span class="card-num">第 76 题</span>
+      </div>
+      <div class="card-title">保留值（包括保留时间和保留体积）是组分在色谱柱中滞留程度的体现，其大小取决于组分在两相间的分配行为。
+组分与固定相的作用力：若组分在固定相中的溶解性或吸附性越强，其在柱内滞留时间越长，保留值越大。
+组分与流动相的作用力：流动相的极性或溶剂化能力会影响组分在两相间的分配。若流动相对组分的溶解能力强，则组分更倾向于留在流动相中，保留值减小。
+因此，保留值反映的是组分与流动相和固定相两者共同作用的平衡结果，而非仅与其中一相作用。
+在液相色谱中，不会显著影响分离效果的是</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, false, 'A', 'C')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">改变固定相种类</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'B', 'C')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">改变流动相配比</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, true, 'C', 'C')" data-label="C">
+          <div class="opt-letter">C</div>
+          <div class="opt-text">改变流动相流速</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'D', 'C')" data-label="D">
+          <div class="opt-letter">D</div>
+          <div class="opt-text">改变流动相种类</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：C</div>
+        <div class="answer-text">正确答案是：改变流动相流速</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="choice">
+      <div class="card-header">
+        <span class="tag tag-choice">选择题</span>
+        <span class="card-num">第 77 题</span>
+      </div>
+      <div class="card-title">柱长和填料粒度主要影响的是柱效（即峰的宽度和分离度），并不改变组分的相对保留顺序，因此不能有效改变选择性。
+在液相色谱分析中，提高色谱柱柱效的最有效的途径是</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, false, 'A', 'C')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">降低流动相的粘度</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'B', 'C')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">降低流动相的流速</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, true, 'C', 'C')" data-label="C">
+          <div class="opt-letter">C</div>
+          <div class="opt-text">减小填料粒度</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'D', 'C')" data-label="D">
+          <div class="opt-letter">D</div>
+          <div class="opt-text">适当升高柱温</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：C</div>
+        <div class="answer-text">正确答案是：减小填料粒度</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="choice">
+      <div class="card-header">
+        <span class="tag tag-choice">选择题</span>
+        <span class="card-num">第 78 题</span>
+      </div>
+      <div class="card-title">在液相色谱分析中，提高色谱柱柱效的核心在于优化固定相的物理特性。减小填料粒度是最有效的手段，因为更小的颗粒能显著增加单位长度色谱柱内的理论塔板数，从而提升分离效率。其原理是：小颗粒填料缩短了溶质在固定相和流动相之间的扩散路径，降低了传质阻力，使峰形更窄、更尖锐，从而提高柱效。
+其他选项虽然也影响柱效，但效果不如减小填料粒度显著：
+降低流动相粘度：可降低扩散阻力，但需配合流动相组成调整，效果有限；
+降低流动相流速：可增加保留时间，提高分离度，但会延长分析时间，且并非“最有效”途径；
+适当升高柱温：可降低粘度、加快传质，但温度过高可能导致选择性下降或固定相不稳定。
+因此，在所有选项中，减小填料粒度是提升柱效最直接、最有效的方法。
+在液相色谱法中，按分离原理分类，液固色谱法属于</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, false, 'A', 'C')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">排阻色谱法</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'B', 'C')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">离子交换色谱法</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, true, 'C', 'C')" data-label="C">
+          <div class="opt-letter">C</div>
+          <div class="opt-text">吸附色谱法</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'D', 'C')" data-label="D">
+          <div class="opt-letter">D</div>
+          <div class="opt-text">分配色谱法</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：C</div>
+        <div class="answer-text">正确答案是：吸附色谱法</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="choice">
+      <div class="card-header">
+        <span class="tag tag-choice">选择题</span>
+        <span class="card-num">第 79 题</span>
+      </div>
+      <div class="card-title">导论里有区别吸附色谱法和分配色谱法。
+在环保分析中，常常要监测水中多环芳烃，如用高效液相色谱分析，应选用下述哪种检波器最好</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, false, 'A', 'B')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">电导检测器</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, true, 'B', 'B')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">荧光检测器</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'C', 'B')" data-label="C">
+          <div class="opt-letter">C</div>
+          <div class="opt-text">示差折光检测器</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'D', 'B')" data-label="D">
+          <div class="opt-letter">D</div>
+          <div class="opt-text">紫外吸收检测器</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：B</div>
+        <div class="answer-text">正确答案是：荧光检测器</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="choice">
+      <div class="card-header">
+        <span class="tag tag-choice">选择题</span>
+        <span class="card-num">第 80 题</span>
+      </div>
+      <div class="card-title">电导检测器主要用于离子色谱，对多环芳烃无响应，不适用。
+示差折光检测器是通用型检测器，灵敏度低，且对环境温度敏感，无法胜任痕量多环芳烃的检测。
+紫外吸收检测器虽可对多环芳烃进行检测，但其灵敏度远低于荧光检测器，不适合痕量分析。
+因此，在高效液相色谱分析水中多环芳烃时，荧光检测器是最佳选择，它能提供高灵敏度、高选择性的检测信号，满足环保监测中对痕量致癌物的精准定量需求。
+在高效液相色谱法中，反相色谱的固定相与流动相的关系是</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, true, 'A', 'A')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">固定相的极性小于流动相的极性</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'B', 'A')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">固定相的极性大于流动相的极性</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'C', 'A')" data-label="C">
+          <div class="opt-letter">C</div>
+          <div class="opt-text">固定相的极性等于流动相的极性</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'D', 'A')" data-label="D">
+          <div class="opt-letter">D</div>
+          <div class="opt-text">没法比较</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：A</div>
+        <div class="answer-text">正确答案是：固定相的极性小于流动相的极性</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="choice">
+      <div class="card-header">
+        <span class="tag tag-choice">选择题</span>
+        <span class="card-num">第 81 题</span>
+      </div>
+      <div class="card-title">在高效液相色谱流程中，试样混合物在（ ）中被分离。</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, false, 'A', 'C')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">记录器</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'B', 'C')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">进样器</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, true, 'C', 'C')" data-label="C">
+          <div class="opt-letter">C</div>
+          <div class="opt-text">色谱柱</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'D', 'C')" data-label="D">
+          <div class="opt-letter">D</div>
+          <div class="opt-text">检测器</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：C</div>
+        <div class="answer-text">正确答案是：色谱柱</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="choice">
+      <div class="card-header">
+        <span class="tag tag-choice">选择题</span>
+        <span class="card-num">第 82 题</span>
+      </div>
+      <div class="card-title">正相分配色谱的流动相为</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, false, 'A', 'D')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">酸性水溶液</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'B', 'D')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">碱性水溶液</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'C', 'D')" data-label="C">
+          <div class="opt-letter">C</div>
+          <div class="opt-text">亲水性试剂</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, true, 'D', 'D')" data-label="D">
+          <div class="opt-letter">D</div>
+          <div class="opt-text">亲脂性试剂</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：D</div>
+        <div class="answer-text">正确答案是：亲脂性试剂</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="choice">
+      <div class="card-header">
+        <span class="tag tag-choice">选择题</span>
+        <span class="card-num">第 83 题</span>
+      </div>
+      <div class="card-title">液相色谱中通用型检测器是</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, false, 'A', 'D')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">热导池检测器</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'B', 'D')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">荧光检测器</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'C', 'D')" data-label="C">
+          <div class="opt-letter">C</div>
+          <div class="opt-text">紫外吸收检测器</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, true, 'D', 'D')" data-label="D">
+          <div class="opt-letter">D</div>
+          <div class="opt-text">示差折光检测器</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：D</div>
+        <div class="answer-text">正确答案是：示差折光检测器</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="choice">
+      <div class="card-header">
+        <span class="tag tag-choice">选择题</span>
+        <span class="card-num">第 84 题</span>
+      </div>
+      <div class="card-title">液相色谱流动相过滤必须使用何种粒径的过滤膜？</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, false, 'A', 'D')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">0.55μm</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'B', 'D')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">0.6μm</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'C', 'D')" data-label="C">
+          <div class="opt-letter">C</div>
+          <div class="opt-text">0.5μm</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, true, 'D', 'D')" data-label="D">
+          <div class="opt-letter">D</div>
+          <div class="opt-text">0.45μm</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：D</div>
+        <div class="answer-text">正确答案是：0.45μm</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="choice">
+      <div class="card-header">
+        <span class="tag tag-choice">选择题</span>
+        <span class="card-num">第 85 题</span>
+      </div>
+      <div class="card-title">液相色谱流动相过滤必须使用0.45 μm粒径的过滤膜。这是标准操作规范，目的是去除流动相中的微小颗粒，防止其堵塞色谱柱或污染系统，从而保障分离效率和仪器稳定性。
+采用反相分配色谱分离混合物时化合物出柱的顺序是</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, true, 'A', 'A')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">极性大的先流出</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'B', 'A')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">分子量大的先流出</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'C', 'A')" data-label="C">
+          <div class="opt-letter">C</div>
+          <div class="opt-text">分子量小的先流出</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'D', 'A')" data-label="D">
+          <div class="opt-letter">D</div>
+          <div class="opt-text">极性小的先流出</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：A</div>
+        <div class="answer-text">正确答案是：极性大的先流出</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="choice">
+      <div class="card-header">
+        <span class="tag tag-choice">选择题</span>
+        <span class="card-num">第 86 题</span>
+      </div>
+      <div class="card-title">反相分配色谱的固定相为非极性，流动相为极性。其分离机制基于化合物在固定相与流动相之间的分配平衡。由于固定相是非极性的，极性大的化合物与非极性固定相的相互作用较弱，更倾向于留在极性流动相中，因此先被洗脱出色谱柱；而极性小的化合物与非极性固定相的亲和力较强，保留时间更长，后流出。
+高效液相色谱与气相色谱相比，不同的是</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, false, 'A', 'C')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">色谱的基本理论</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'B', 'C')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">定性定量原理</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, true, 'C', 'C')" data-label="C">
+          <div class="opt-letter">C</div>
+          <div class="opt-text">使用范围</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'D', 'C')" data-label="D">
+          <div class="opt-letter">D</div>
+          <div class="opt-text">自动化程度高</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：C</div>
+        <div class="answer-text">正确答案是：使用范围</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="choice">
+      <div class="card-header">
+        <span class="tag tag-choice">选择题</span>
+        <span class="card-num">第 87 题</span>
+      </div>
+      <div class="card-title">高效液相色谱（HPLC）与气相色谱（GC）在色谱的基本理论和定性定量原理上是完全一致的，二者均基于组分在流动相与固定相之间分配行为的差异实现分离，并通过保留时间进行定性、峰面积或峰高进行定量。同时，现代高效液相色谱仪也具备高度自动化能力，与气相色谱仪类似。
+二者最本质的区别在于使用范围：
+气相色谱要求样品必须具有挥发性或可被衍生化为挥发性物质，且需热稳定，因此主要适用于沸点较低、热稳定性好的化合物，这类物质仅占有机化合物的15%~20%。
+高效液相色谱则无需样品气化，适用于高沸点、大分子、强极性、热不稳定以及离子型化合物，只要样品能溶解于流动相中即可分析，因此其应用范围远广于气相色谱。
+综上，高效液相色谱与气相色谱相比，不同之处在于使用范围。
+高效液相色谱中，常用作固定相又可用作键合相载体的是</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, false, 'A', 'C')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">分子筛</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'B', 'C')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">氧化铝</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, true, 'C', 'C')" data-label="C">
+          <div class="opt-letter">C</div>
+          <div class="opt-text">硅胶</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'D', 'C')" data-label="D">
+          <div class="opt-letter">D</div>
+          <div class="opt-text">活性炭</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：C</div>
+        <div class="answer-text">正确答案是：硅胶</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="choice">
+      <div class="card-header">
+        <span class="tag tag-choice">选择题</span>
+        <span class="card-num">第 88 题</span>
+      </div>
+      <div class="card-title">在高效液相色谱中，硅胶是应用最广泛的一种固定相材料，同时它也是制备键合相最常用的载体。其表面含有大量硅羟基（Si-OH），可通过化学反应与各种有机官能团键合，形成如C18、C8、苯基、氨基、氰基等不同类型的键合固定相，从而满足反相、正相、离子交换等多种分离模式的需求。
+高效液相色谱仪与普通紫外－可见分光光度计完全不同的部件是</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, true, 'A', 'A')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">流通池</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'B', 'A')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">分光系统</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'C', 'A')" data-label="C">
+          <div class="opt-letter">C</div>
+          <div class="opt-text">光源</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'D', 'A')" data-label="D">
+          <div class="opt-letter">D</div>
+          <div class="opt-text">检测系统</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：A</div>
+        <div class="answer-text">正确答案是：流通池</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="choice">
+      <div class="card-header">
+        <span class="tag tag-choice">选择题</span>
+        <span class="card-num">第 89 题</span>
+      </div>
+      <div class="card-title">流通池：是高效液相色谱仪检测器的一部分，其作用是让从色谱柱流出的流动相携带待测组分连续通过检测区域，从而实现对分离后各组分的实时检测。而普通紫外-可见分光光度计使用的是固定的吸收池（或称比色皿），样品静止不动，仅测量其吸光度。
+高效液相色谱仪与气相色谱仪比较增加了</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, true, 'A', 'A')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">梯度淋洗装置</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'B', 'A')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">进样装置</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'C', 'A')" data-label="C">
+          <div class="opt-letter">C</div>
+          <div class="opt-text">程序升温</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'D', 'A')" data-label="D">
+          <div class="opt-letter">D</div>
+          <div class="opt-text">恒温箱</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：A</div>
+        <div class="answer-text">正确答案是：梯度淋洗装置</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="choice">
+      <div class="card-header">
+        <span class="tag tag-choice">选择题</span>
+        <span class="card-num">第 90 题</span>
+      </div>
+      <div class="card-title">下列离子源与离子化方式中，电离能量最大的是:</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, true, 'A', 'A')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">EI</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'B', 'A')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">ESI</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'C', 'A')" data-label="C">
+          <div class="opt-letter">C</div>
+          <div class="opt-text">MALDI</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'D', 'A')" data-label="D">
+          <div class="opt-letter">D</div>
+          <div class="opt-text">APCI</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：A</div>
+        <div class="answer-text">正确答案是：EI</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="choice">
+      <div class="card-header">
+        <span class="tag tag-choice">选择题</span>
+        <span class="card-num">第 91 题</span>
+      </div>
+      <div class="card-title">下列离子源与离子化方式中，获得碎片信息最多的是:</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, false, 'A', 'D')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">MALDI</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'B', 'D')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">ESI</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'C', 'D')" data-label="C">
+          <div class="opt-letter">C</div>
+          <div class="opt-text">APCI</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, true, 'D', 'D')" data-label="D">
+          <div class="opt-letter">D</div>
+          <div class="opt-text">EI</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：D</div>
+        <div class="answer-text">正确答案是：EI</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="choice">
+      <div class="card-header">
+        <span class="tag tag-choice">选择题</span>
+        <span class="card-num">第 92 题</span>
+      </div>
+      <div class="card-title">下列说法正确的是:</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, false, 'A', 'D')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">强度最大的峰是分子离子峰</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'B', 'D')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">质量数最大的峰是分子离子峰</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'C', 'D')" data-label="C">
+          <div class="opt-letter">C</div>
+          <div class="opt-text">相对丰度最大的峰是分子离子峰</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, true, 'D', 'D')" data-label="D">
+          <div class="opt-letter">D</div>
+          <div class="opt-text">强度最大的峰是称为基峰</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：D</div>
+        <div class="answer-text">正确答案是：强度最大的峰是称为基峰</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="choice">
+      <div class="card-header">
+        <span class="tag tag-choice">选择题</span>
+        <span class="card-num">第 93 题</span>
+      </div>
+      <div class="card-title">不需要在真空中工作的离子源是</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, false, 'A', 'C')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">CI</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'B', 'C')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">FAD</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, true, 'C', 'C')" data-label="C">
+          <div class="opt-letter">C</div>
+          <div class="opt-text">ESI</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'D', 'C')" data-label="D">
+          <div class="opt-letter">D</div>
+          <div class="opt-text">EI</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：C</div>
+        <div class="answer-text">正确答案是：ESI</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="choice">
+      <div class="card-header">
+        <span class="tag tag-choice">选择题</span>
+        <span class="card-num">第 94 题</span>
+      </div>
+      <div class="card-title">以相对离子流强度为纵坐标，质荷比(m/z)为横坐标，将离子按m/z从小到大依次排列得到的图谱，称为</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, false, 'A', 'B')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">色谱</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, true, 'B', 'B')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">质谱</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'C', 'B')" data-label="C">
+          <div class="opt-letter">C</div>
+          <div class="opt-text">标准曲线</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'D', 'B')" data-label="D">
+          <div class="opt-letter">D</div>
+          <div class="opt-text">光谱</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：B</div>
+        <div class="answer-text">正确答案是：质谱</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="choice">
+      <div class="card-header">
+        <span class="tag tag-choice">选择题</span>
+        <span class="card-num">第 95 题</span>
+      </div>
+      <div class="card-title">单位时间采集到的所有离子碎片产生的信号强度随时间变化的色谱图，称为</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, true, 'A', 'A')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">总离子流色谱图</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'B', 'A')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">质量色谱图</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'C', 'A')" data-label="C">
+          <div class="opt-letter">C</div>
+          <div class="opt-text">光谱图</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'D', 'A')" data-label="D">
+          <div class="opt-letter">D</div>
+          <div class="opt-text">质谱图</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：A</div>
+        <div class="answer-text">正确答案是：总离子流色谱图</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="choice">
+      <div class="card-header">
+        <span class="tag tag-choice">选择题</span>
+        <span class="card-num">第 96 题</span>
+      </div>
+      <div class="card-title">在HPLC-MS/MS分析中，MRM是指</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, true, 'A', 'A')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">多反应监测</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'B', 'A')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">母离子扫描</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'C', 'A')" data-label="C">
+          <div class="opt-letter">C</div>
+          <div class="opt-text">全扫描</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'D', 'A')" data-label="D">
+          <div class="opt-letter">D</div>
+          <div class="opt-text">子离子扫描</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：A</div>
+        <div class="answer-text">正确答案是：多反应监测</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="choice">
+      <div class="card-header">
+        <span class="tag tag-choice">选择题</span>
+        <span class="card-num">第 97 题</span>
+      </div>
+      <div class="card-title">对某个特征离子（一定的m/z）进行扫描得到的色谱图，或者从总离子流色谱图中对某个特征离子（一定的m/z）进行计算机数据处理而获得的色谱图，称为</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, true, 'A', 'A')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">质量色谱图</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'B', 'A')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">光谱图</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'C', 'A')" data-label="C">
+          <div class="opt-letter">C</div>
+          <div class="opt-text">TIC</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'D', 'A')" data-label="D">
+          <div class="opt-letter">D</div>
+          <div class="opt-text">质谱图</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：A</div>
+        <div class="answer-text">正确答案是：质量色谱图</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="choice">
+      <div class="card-header">
+        <span class="tag tag-choice">选择题</span>
+        <span class="card-num">第 98 题</span>
+      </div>
+      <div class="card-title">将离子源中所形成的各种离子按质荷比（m/z）进行分离的装置，称为</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, false, 'A', 'C')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">检测器</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'B', 'C')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">放大器</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, true, 'C', 'C')" data-label="C">
+          <div class="opt-letter">C</div>
+          <div class="opt-text">质量分析器</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'D', 'C')" data-label="D">
+          <div class="opt-letter">D</div>
+          <div class="opt-text">离子源</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：C</div>
+        <div class="answer-text">正确答案是：质量分析器</div>
+      </div>
+    </div>
+
+    <div class="card choice-card" data-type="choice">
+      <div class="card-header">
+        <span class="tag tag-choice">选择题</span>
+        <span class="card-num">第 99 题</span>
+      </div>
+      <div class="card-title">选择质谱图中能表征待测组分的一个或几个离子（m/z）（特征离子）进行检测的方法，称为</div>
+      <div class="options">
+        
+        <div class="opt" onclick="checkAnswer(this, false, 'A', 'D')" data-label="A">
+          <div class="opt-letter">A</div>
+          <div class="opt-text">色谱检测模式</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'B', 'D')" data-label="B">
+          <div class="opt-letter">B</div>
+          <div class="opt-text">Scan模式</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, false, 'C', 'D')" data-label="C">
+          <div class="opt-letter">C</div>
+          <div class="opt-text">全扫描检测模式</div>
+        </div>
+        <div class="opt" onclick="checkAnswer(this, true, 'D', 'D')" data-label="D">
+          <div class="opt-letter">D</div>
+          <div class="opt-text">选择性离子监测模式</div>
+        </div>
+      </div>
+      <div class="answer-box">
+        <div class="answer-label">✓ 正确答案：D</div>
+        <div class="answer-text">正确答案是：选择性离子监测模式</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="stat-bar">
+  <span style="color:#6b7280">已答</span>
+  <span style="font-weight:700;color:#3b82f6" id="answered-count">0</span>
+  <div style="width:1px;height:16px;background:#e5e7eb"></div>
+  <span style="color:#6b7280">正确</span>
+  <span style="font-weight:700;color:#16a34a" id="correct-count">0</span>
+</div>
+
+<script>
+let answered = 0, correct = 0, streak = 0;
+
+function checkAnswer(el, isCorrect, label, correctAns) {
+  const card = el.closest('.card');
+  if (card.dataset.answered) return;
+  card.dataset.answered = 'true';
+
+  const opts = card.querySelectorAll('.opt');
+  opts.forEach(o => {
+    o.classList.add('disabled');
+    o.onclick = null;
+    const l = o.dataset.label;
+    if (l === correctAns || correctAns.includes(l)) {
+      o.classList.add('correct');
+    } else if (o === el) {
+      o.classList.add('wrong');
+    }
+  });
+
+  card.querySelector('.answer-box').classList.add('show');
+
+  answered++;
+  if (isCorrect) { correct++; streak++; }
+  else { streak = 0; }
+  document.getElementById('score').textContent = correct;
+  document.getElementById('streak').textContent = streak;
+  document.getElementById('answered-count').textContent = answered;
+  document.getElementById('correct-count').textContent = correct;
+}
+
+function toggleEssay(btn) {
+  const ans = btn.nextElementSibling;
+  if (ans.classList.contains('show')) {
+    ans.classList.remove('show');
+    btn.textContent = '查看答案与解析';
+  } else {
+    ans.classList.add('show');
+    btn.textContent = '收起答案';
+    const card = btn.closest('.card');
+    if (!card.dataset.answered) {
+      card.dataset.answered = 'true';
+      answered++;
+      document.getElementById('answered-count').textContent = answered;
+    }
+  }
+}
+
+function showAll() {
+  document.querySelectorAll('.card').forEach(c => c.style.display = 'block');
+  updateFilterBtn(event.target);
+}
+function showChoice() {
+  document.querySelectorAll('.card').forEach(c => c.style.display = c.dataset.type === 'choice' ? 'block' : 'none');
+  updateFilterBtn(event.target);
+}
+function showJudgment() {
+  document.querySelectorAll('.card').forEach(c => c.style.display = c.dataset.type === 'judgment' ? 'block' : 'none');
+  updateFilterBtn(event.target);
+}
+function showEssay() {
+  document.querySelectorAll('.card').forEach(c => c.style.display = c.dataset.type === 'essay' ? 'block' : 'none');
+  updateFilterBtn(event.target);
+}
+function updateFilterBtn(btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+</script>
+</body>
+</html>

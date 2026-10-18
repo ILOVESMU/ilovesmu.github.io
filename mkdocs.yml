@@ -41,6 +41,13 @@ copyright: Copyright © 2025 Online SMU All Rights Reserved
 extra_javascript:
   - 'https://busuanzi.9420.ltd/js' #busuanzi
 
+extra_css:
+  - assets/stylesheets/extra.css
+
+markdown_extensions:
+  - attr_list
+  - md_in_html
+
 
 
 

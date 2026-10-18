@@ -11,8 +11,10 @@
   {% endif %}
   {{ page.content }}
   <hr />
-  <span id="busuanzi_container_page_pv">本文总阅读量<span id="busuanzi_page_pv">...</span>次</span>
-  <span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_site_pv">...</span>次</span>
+  <div class="site-stats" aria-label="阅读统计">
+    <span id="busuanzi_container_page_pv" style="display:none">本文阅读 <strong id="busuanzi_page_pv">...</strong> 次</span>
+    <span id="busuanzi_container_site_pv" style="display:none">本站访问 <strong id="busuanzi_site_pv">...</strong> 次</span>
+  </div>
   {% if page and page.meta %}
     {% if page.meta.git_revision_date_localized or
             page.meta.revision_date

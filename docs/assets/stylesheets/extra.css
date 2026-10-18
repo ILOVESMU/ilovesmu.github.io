@@ -1,0 +1,388 @@
+:root {
+  --md-primary-fg-color: #245a4a;
+  --md-primary-fg-color--light: #3f8f78;
+  --md-primary-fg-color--dark: #173f35;
+}
+
+[data-md-color-scheme="slate"] {
+  --md-primary-fg-color: #3f8f78;
+  --md-primary-fg-color--light: #76b99f;
+  --md-primary-fg-color--dark: #245a4a;
+}
+
+.md-header,
+.md-tabs {
+  background-color: #245a4a !important;
+}
+
+[data-md-color-scheme="slate"] .md-header,
+[data-md-color-scheme="slate"] .md-tabs {
+  background-color: #173f35 !important;
+}
+
+.smu-home {
+  --smu-ink: #1c2b27;
+  --smu-pine: #245a4a;
+  --smu-jade: #3f8f78;
+  --smu-paper: #f7f4ea;
+  --smu-paper-deep: #ece7d8;
+  --smu-red: #b5462f;
+  --smu-muted: #68746e;
+  --smu-line: rgba(36, 90, 74, 0.18);
+  --smu-serif: "Noto Serif CJK SC", "Source Han Serif SC", "Songti SC", SimSun, serif;
+  --smu-sans: "Noto Sans CJK SC", "Source Han Sans SC", "Microsoft YaHei", sans-serif;
+  color: var(--smu-ink);
+  font-family: var(--smu-sans);
+}
+
+.smu-home,
+.smu-home .smu-hero,
+.smu-home .smu-hero-copy,
+.smu-home .smu-map-card {
+  min-width: 0;
+}
+
+[data-md-color-scheme="slate"] .smu-home {
+  --smu-ink: #edf4ee;
+  --smu-pine: #9bd3bb;
+  --smu-jade: #76b99f;
+  --smu-paper: #1b2923;
+  --smu-paper-deep: #22342c;
+  --smu-red: #e08064;
+  --smu-muted: #a9b9b0;
+  --smu-line: rgba(190, 220, 205, 0.2);
+}
+
+.smu-home .smu-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(260px, 0.85fr);
+  gap: clamp(24px, 4vw, 56px);
+  align-items: center;
+  padding: clamp(8px, 2vw, 18px) 0 clamp(26px, 4vw, 46px);
+  border-bottom: 1px solid var(--smu-line);
+}
+
+.smu-home .smu-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin: 0;
+  color: var(--smu-red);
+  font-size: 0.76rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+}
+
+.smu-home .smu-kicker::before {
+  content: "";
+  width: 2px;
+  height: 1.35em;
+  background: var(--smu-red);
+}
+
+.smu-home .smu-title {
+  margin: 0.45rem 0 0.85rem;
+  color: var(--smu-pine);
+  font-family: var(--smu-serif);
+  font-size: clamp(2.1rem, 3.4vw, 3.2rem);
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+}
+
+.smu-home .smu-title span {
+  display: block;
+}
+
+@media (min-width: 901px) {
+  .smu-home .smu-title span:first-child {
+    white-space: nowrap;
+  }
+}
+
+.smu-home .smu-title-sub {
+  margin-top: 0.3rem;
+  color: var(--smu-ink);
+  font-family: var(--smu-serif);
+  font-size: 0.5em;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+}
+
+.smu-home .smu-lede {
+  max-width: 35em;
+  margin: 0;
+  color: var(--smu-muted);
+  font-size: 1rem;
+  line-height: 1.9;
+}
+
+.smu-home .smu-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+  margin-top: 1.35rem;
+}
+
+.smu-home .smu-actions a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.75rem;
+  padding: 0.5rem 1.05rem;
+  border: 1px solid var(--smu-pine);
+  border-radius: 2px;
+  color: var(--smu-pine);
+  font-weight: 600;
+  text-decoration: none;
+  transition: background-color 160ms ease, color 160ms ease;
+}
+
+.smu-home .smu-actions a:first-child,
+.smu-home .smu-actions a:hover {
+  background: var(--smu-pine);
+  color: #fff;
+}
+
+.smu-home .smu-actions a:focus-visible,
+.smu-home a:focus-visible {
+  outline: 3px solid rgba(181, 70, 47, 0.55);
+  outline-offset: 3px;
+}
+
+.smu-home .smu-map-card {
+  position: relative;
+  margin: 0;
+  overflow: hidden;
+  border: 1px solid var(--smu-line);
+  border-radius: 3px 3px 18px 3px;
+  background: var(--smu-paper);
+  box-shadow: 12px 12px 0 rgba(36, 90, 74, 0.07);
+}
+
+.smu-home .smu-map-card::before {
+  position: absolute;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  padding: 0.32rem 0.7rem;
+  background: var(--smu-red);
+  color: #fff;
+  content: "校园地图";
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+}
+
+.smu-home .smu-map-card img {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+}
+
+.smu-home .smu-map-card figcaption {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.4rem 1rem;
+  padding: 0.7rem 0.9rem;
+  border-top: 1px solid var(--smu-line);
+  color: var(--smu-muted);
+  font-size: 0.78rem;
+}
+
+.smu-home .smu-map-card figcaption a {
+  color: var(--smu-pine);
+  font-weight: 600;
+  text-decoration: none;
+  border-bottom: 1px solid currentColor;
+}
+
+.smu-home .smu-section-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.35rem 1rem;
+  margin: 2rem 0 0.9rem;
+  padding-bottom: 0.6rem;
+  border-bottom: 1px solid var(--smu-line);
+}
+
+.smu-home .smu-section-head h2 {
+  margin: 0;
+  color: var(--smu-pine);
+  font-family: var(--smu-serif);
+  font-size: clamp(1.35rem, 2.5vw, 1.85rem);
+}
+
+.smu-home .smu-section-head p {
+  margin: 0;
+  color: var(--smu-muted);
+  font-size: 0.8rem;
+}
+
+.smu-home .smu-section-head + ol {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1px;
+  margin: 0;
+  padding: 1px;
+  list-style: none;
+  background: var(--smu-line);
+  counter-reset: step;
+}
+
+.smu-home .smu-section-head + ol li {
+  margin: 0;
+  padding: 0.9rem 0.95rem 1rem;
+  background: var(--smu-paper);
+  color: var(--smu-muted);
+  font-size: 0.8rem;
+  line-height: 1.65;
+  counter-increment: step;
+}
+
+.smu-home .smu-section-head + ol li::before {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: var(--smu-red);
+  content: "0" counter(step);
+  font-family: var(--smu-serif);
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+.smu-home .smu-section-head + ol a {
+  color: var(--smu-ink);
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.smu-home .smu-section-head + ol a:hover {
+  color: var(--smu-pine);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.smu-home .smu-section-head + ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  columns: 2;
+  column-gap: 2.2rem;
+}
+
+.smu-home .smu-section-head + ul li {
+  break-inside: avoid;
+  margin: 0;
+  padding: 0.65rem 0;
+  border-bottom: 1px dotted var(--smu-line);
+  color: var(--smu-muted);
+  font-size: 0.8rem;
+  line-height: 1.65;
+}
+
+.smu-home .smu-section-head + ul a {
+  color: var(--smu-pine);
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.smu-home .smu-section-head + ul a:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.smu-home .smu-note {
+  margin: 1.1rem 0 0;
+  padding-left: 0.8rem;
+  border-left: 2px solid var(--smu-red);
+  color: var(--smu-muted);
+  font-size: 0.8rem;
+  line-height: 1.75;
+}
+
+.smu-home .smu-section-head--more + ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 1.1rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  columns: auto;
+}
+
+.smu-home .smu-section-head--more + ul li {
+  padding: 0;
+  border-bottom: 0;
+}
+
+.smu-home .smu-section-head--more + ul a {
+  color: var(--smu-muted);
+  font-size: 0.8rem;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+}
+
+.smu-home .smu-section-head--more + ul a:hover {
+  color: var(--smu-pine);
+  border-bottom-color: var(--smu-pine);
+}
+
+.md-typeset .site-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem 1.45rem;
+  margin-top: 0.6rem;
+  color: var(--md-default-fg-color--light);
+  font-size: 0.78rem;
+}
+
+.md-typeset .site-stats span {
+  align-items: baseline;
+  gap: 0.3rem;
+}
+
+.md-typeset .site-stats strong {
+  color: var(--md-default-fg-color);
+  font-family: "Noto Serif CJK SC", "Source Han Serif SC", "Songti SC", SimSun, serif;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+@media (max-width: 900px) {
+  .smu-home .smu-hero {
+    grid-template-columns: 1fr;
+  }
+
+  .smu-home .smu-section-head + ol {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 600px) {
+  .smu-home .smu-section-head + ol {
+    grid-template-columns: 1fr;
+  }
+
+  .smu-home .smu-section-head + ul {
+    columns: 1;
+  }
+
+  .smu-home .smu-map-card {
+    box-shadow: 7px 7px 0 rgba(36, 90, 74, 0.07);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .smu-home a {
+    transition: none;
+  }
+}

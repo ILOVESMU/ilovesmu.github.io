@@ -1,339 +1,140 @@
 :root {
-  --md-primary-fg-color: #245a4a;
-  --md-primary-fg-color--light: #3f8f78;
-  --md-primary-fg-color--dark: #173f35;
+  --md-primary-fg-color: #2f6bff;
+  --md-primary-fg-color--light: #18c9e6;
+  --md-primary-fg-color--dark: #1e49c7;
 }
 
 [data-md-color-scheme="slate"] {
-  --md-primary-fg-color: #3f8f78;
-  --md-primary-fg-color--light: #76b99f;
-  --md-primary-fg-color--dark: #245a4a;
+  --md-primary-fg-color: #18c9e6;
+  --md-primary-fg-color--light: #6fe3f4;
+  --md-primary-fg-color--dark: #1e49c7;
 }
 
 .md-header,
 .md-tabs {
-  background-color: #245a4a !important;
+  background: linear-gradient(90deg, #2f6bff 0%, #18c9e6 100%) !important;
 }
 
 [data-md-color-scheme="slate"] .md-header,
 [data-md-color-scheme="slate"] .md-tabs {
-  background-color: #173f35 !important;
+  background: linear-gradient(90deg, #1e49c7 0%, #087e96 100%) !important;
 }
 
-.smu-home {
-  --smu-ink: #1c2b27;
-  --smu-pine: #245a4a;
-  --smu-jade: #3f8f78;
-  --smu-paper: #f7f4ea;
-  --smu-paper-deep: #ece7d8;
-  --smu-red: #b5462f;
-  --smu-muted: #68746e;
-  --smu-line: rgba(36, 90, 74, 0.18);
-  --smu-serif: "Noto Serif CJK SC", "Source Han Serif SC", "Songti SC", SimSun, serif;
-  --smu-sans: "Noto Sans CJK SC", "Source Han Sans SC", "Microsoft YaHei", sans-serif;
-  color: var(--smu-ink);
-  font-family: var(--smu-sans);
+.home-simple {
+  max-width: 860px;
+  margin: 0 auto;
 }
 
-.smu-home,
-.smu-home .smu-hero,
-.smu-home .smu-hero-copy,
-.smu-home .smu-map-card {
-  min-width: 0;
+.home-simple .home-hero {
+  padding: clamp(1.4rem, 4vw, 2.5rem);
+  border: 1px solid rgba(47, 107, 255, 0.16);
+  border-radius: 16px;
+  background:
+    radial-gradient(circle at 90% 8%, rgba(24, 201, 230, 0.2), transparent 34%),
+    linear-gradient(135deg, #edf9ff 0%, #e6fbf8 55%, #e8f3ff 100%);
 }
 
-[data-md-color-scheme="slate"] .smu-home {
-  --smu-ink: #edf4ee;
-  --smu-pine: #9bd3bb;
-  --smu-jade: #76b99f;
-  --smu-paper: #1b2923;
-  --smu-paper-deep: #22342c;
-  --smu-red: #e08064;
-  --smu-muted: #a9b9b0;
-  --smu-line: rgba(190, 220, 205, 0.2);
-}
-
-.smu-home .smu-hero {
-  display: grid;
-  grid-template-columns: minmax(0, 1.15fr) minmax(260px, 0.85fr);
-  gap: clamp(24px, 4vw, 56px);
-  align-items: center;
-  padding: clamp(8px, 2vw, 18px) 0 clamp(26px, 4vw, 46px);
-  border-bottom: 1px solid var(--smu-line);
-}
-
-.smu-home .smu-kicker {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.6rem;
-  margin: 0;
-  color: var(--smu-red);
-  font-size: 0.76rem;
-  font-weight: 600;
-  letter-spacing: 0.1em;
-}
-
-.smu-home .smu-kicker::before {
-  content: "";
-  width: 2px;
-  height: 1.35em;
-  background: var(--smu-red);
-}
-
-.smu-home .smu-title {
-  margin: 0.45rem 0 0.85rem;
-  color: var(--smu-pine);
-  font-family: var(--smu-serif);
-  font-size: clamp(2.1rem, 3.4vw, 3.2rem);
-  font-weight: 700;
-  line-height: 1.08;
-  letter-spacing: -0.02em;
-}
-
-.smu-home .smu-title span {
-  display: block;
-}
-
-@media (min-width: 901px) {
-  .smu-home .smu-title span:first-child {
-    white-space: nowrap;
-  }
-}
-
-.smu-home .smu-title-sub {
-  margin-top: 0.3rem;
-  color: var(--smu-ink);
-  font-family: var(--smu-serif);
-  font-size: 0.5em;
-  font-weight: 500;
-  letter-spacing: 0.06em;
-}
-
-.smu-home .smu-lede {
-  max-width: 35em;
-  margin: 0;
-  color: var(--smu-muted);
-  font-size: 1rem;
-  line-height: 1.9;
-}
-
-.smu-home .smu-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.7rem;
-  margin-top: 1.35rem;
-}
-
-.smu-home .smu-actions a {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 2.75rem;
-  padding: 0.5rem 1.05rem;
-  border: 1px solid var(--smu-pine);
-  border-radius: 2px;
-  color: var(--smu-pine);
-  font-weight: 600;
-  text-decoration: none;
-  transition: background-color 160ms ease, color 160ms ease;
-}
-
-.smu-home .smu-actions a:first-child,
-.smu-home .smu-actions a:hover {
-  background: var(--smu-pine);
-  color: #fff;
-}
-
-.smu-home .smu-actions a:focus-visible,
-.smu-home a:focus-visible {
-  outline: 3px solid rgba(181, 70, 47, 0.55);
-  outline-offset: 3px;
-}
-
-.smu-home .smu-map-card {
-  position: relative;
-  margin: 0;
-  overflow: hidden;
-  border: 1px solid var(--smu-line);
-  border-radius: 3px 3px 18px 3px;
-  background: var(--smu-paper);
-  box-shadow: 12px 12px 0 rgba(36, 90, 74, 0.07);
-}
-
-.smu-home .smu-map-card::before {
-  position: absolute;
-  z-index: 1;
-  top: 0;
-  left: 0;
-  padding: 0.32rem 0.7rem;
-  background: var(--smu-red);
-  color: #fff;
-  content: "校园地图";
-  font-size: 0.72rem;
+.home-simple .home-kicker {
+  margin: 0 0 0.55rem;
+  color: #0f7f9c;
+  font-size: 0.78rem;
   font-weight: 600;
   letter-spacing: 0.08em;
 }
 
-.smu-home .smu-map-card img {
-  display: block;
-  width: 100%;
-  max-width: 100%;
-  height: auto;
-  aspect-ratio: 4 / 3;
-  object-fit: cover;
+.home-simple .home-hero h1 {
+  margin: 0 0 0.65rem;
+  color: #123b5d;
+  font-family: "Noto Serif CJK SC", "Source Han Serif SC", "Songti SC", SimSun, serif;
+  font-size: clamp(1.75rem, 4vw, 2.55rem);
+  line-height: 1.25;
 }
 
-.smu-home .smu-map-card figcaption {
+.home-simple .home-hero p {
+  margin: 0;
+  color: #41617a;
+  line-height: 1.8;
+}
+
+.home-simple .home-actions {
   display: flex;
   flex-wrap: wrap;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 0.4rem 1rem;
-  padding: 0.7rem 0.9rem;
-  border-top: 1px solid var(--smu-line);
-  color: var(--smu-muted);
-  font-size: 0.78rem;
+  gap: 0.65rem;
+  margin-top: 1.2rem;
 }
 
-.smu-home .smu-map-card figcaption a {
-  color: var(--smu-pine);
+.home-simple .home-actions a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.7rem;
+  padding: 0.5rem 1.05rem;
+  border: 1px solid #2f6bff;
+  border-radius: 6px;
+  background: #2f6bff;
+  color: #fff;
   font-weight: 600;
   text-decoration: none;
-  border-bottom: 1px solid currentColor;
+  transition: background-color 160ms ease, border-color 160ms ease;
 }
 
-.smu-home .smu-section-head {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 0.35rem 1rem;
-  margin: 2rem 0 0.9rem;
-  padding-bottom: 0.6rem;
-  border-bottom: 1px solid var(--smu-line);
+.home-simple .home-actions a.home-actions__ghost {
+  border-color: rgba(47, 107, 255, 0.3);
+  background: rgba(255, 255, 255, 0.74);
+  color: #1e49c7;
 }
 
-.smu-home .smu-section-head h2 {
-  margin: 0;
-  color: var(--smu-pine);
-  font-family: var(--smu-serif);
-  font-size: clamp(1.35rem, 2.5vw, 1.85rem);
+.home-simple .home-actions a:hover {
+  border-color: #1e49c7;
+  background: #1e49c7;
+  color: #fff;
 }
 
-.smu-home .smu-section-head p {
-  margin: 0;
-  color: var(--smu-muted);
-  font-size: 0.8rem;
+.home-simple .home-actions a:focus-visible,
+.home-simple a:focus-visible {
+  outline: 3px solid rgba(24, 201, 230, 0.55);
+  outline-offset: 3px;
 }
 
-.smu-home .smu-section-head + ol {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 1px;
-  margin: 0;
-  padding: 1px;
-  list-style: none;
-  background: var(--smu-line);
-  counter-reset: step;
+.home-simple h2 {
+  margin: 1.8rem 0 0.6rem;
+  color: #123b5d;
+  font-family: "Noto Serif CJK SC", "Source Han Serif SC", "Songti SC", SimSun, serif;
+  font-size: 1.35rem;
 }
 
-.smu-home .smu-section-head + ol li {
-  margin: 0;
-  padding: 0.9rem 0.95rem 1rem;
-  background: var(--smu-paper);
-  color: var(--smu-muted);
-  font-size: 0.8rem;
-  line-height: 1.65;
-  counter-increment: step;
-}
-
-.smu-home .smu-section-head + ol li::before {
-  display: block;
-  margin-bottom: 0.5rem;
-  color: var(--smu-red);
-  content: "0" counter(step);
-  font-family: var(--smu-serif);
-  font-size: 1.05rem;
-  font-weight: 600;
-}
-
-.smu-home .smu-section-head + ol a {
-  color: var(--smu-ink);
-  font-size: 0.95rem;
-  font-weight: 600;
-  text-decoration: none;
-}
-
-.smu-home .smu-section-head + ol a:hover {
-  color: var(--smu-pine);
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
-
-.smu-home .smu-section-head + ul {
+.home-simple > ul {
+  columns: 2;
+  column-gap: 2rem;
   margin: 0;
   padding: 0;
   list-style: none;
-  columns: 2;
-  column-gap: 2.2rem;
 }
 
-.smu-home .smu-section-head + ul li {
+.home-simple > ul li {
   break-inside: avoid;
-  margin: 0;
-  padding: 0.65rem 0;
-  border-bottom: 1px dotted var(--smu-line);
-  color: var(--smu-muted);
-  font-size: 0.8rem;
-  line-height: 1.65;
+  padding: 0.55rem 0;
+  border-bottom: 1px solid rgba(47, 107, 255, 0.12);
 }
 
-.smu-home .smu-section-head + ul a {
-  color: var(--smu-pine);
-  font-size: 0.95rem;
-  font-weight: 600;
+.home-simple > ul a {
+  color: #1f5f8b;
   text-decoration: none;
 }
 
-.smu-home .smu-section-head + ul a:hover {
+.home-simple > ul a:hover {
+  color: #0f7f9c;
   text-decoration: underline;
   text-underline-offset: 3px;
 }
 
-.smu-home .smu-note {
+.home-simple .home-note {
   margin: 1.1rem 0 0;
-  padding-left: 0.8rem;
-  border-left: 2px solid var(--smu-red);
-  color: var(--smu-muted);
+  padding-left: 0.75rem;
+  border-left: 2px solid #18c9e6;
+  color: #5a7183;
   font-size: 0.8rem;
   line-height: 1.75;
-}
-
-.smu-home .smu-section-head--more + ul {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.35rem 1.1rem;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  columns: auto;
-}
-
-.smu-home .smu-section-head--more + ul li {
-  padding: 0;
-  border-bottom: 0;
-}
-
-.smu-home .smu-section-head--more + ul a {
-  color: var(--smu-muted);
-  font-size: 0.8rem;
-  text-decoration: none;
-  border-bottom: 1px solid transparent;
-}
-
-.smu-home .smu-section-head--more + ul a:hover {
-  color: var(--smu-pine);
-  border-bottom-color: var(--smu-pine);
 }
 
 .md-typeset .site-stats {
@@ -345,44 +146,102 @@
   font-size: 0.78rem;
 }
 
-.md-typeset .site-stats span {
-  align-items: baseline;
-  gap: 0.3rem;
-}
-
 .md-typeset .site-stats strong {
-  color: var(--md-default-fg-color);
+  color: #1e49c7;
   font-family: "Noto Serif CJK SC", "Source Han Serif SC", "Songti SC", SimSun, serif;
   font-size: 1rem;
   font-weight: 600;
 }
 
-@media (max-width: 900px) {
-  .smu-home .smu-hero {
-    grid-template-columns: 1fr;
-  }
-
-  .smu-home .smu-section-head + ol {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
+.md-typeset .club-gallery {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  margin: 1.25rem 0 1.5rem;
 }
 
-@media (max-width: 600px) {
-  .smu-home .smu-section-head + ol {
-    grid-template-columns: 1fr;
+.md-typeset .club-gallery a {
+  display: block;
+  overflow: hidden;
+  border: 1px solid rgba(47, 107, 255, 0.16);
+  border-radius: 10px;
+  background: #f7fcff;
+}
+
+.md-typeset .club-gallery img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.md-typeset .club-byline {
+  margin-top: 1.5rem;
+  color: var(--md-default-fg-color--light);
+  font-size: 0.82rem;
+  text-align: right;
+}
+
+[data-md-color-scheme="slate"] .home-simple .home-hero {
+  border-color: rgba(127, 217, 255, 0.2);
+  background:
+    radial-gradient(circle at 90% 8%, rgba(24, 201, 230, 0.14), transparent 34%),
+    linear-gradient(135deg, #122a3a 0%, #123c3a 55%, #162f43 100%);
+}
+
+[data-md-color-scheme="slate"] .home-simple .home-kicker {
+  color: #6fe3f4;
+}
+
+[data-md-color-scheme="slate"] .home-simple .home-hero h1,
+[data-md-color-scheme="slate"] .home-simple h2 {
+  color: #e6f7ff;
+}
+
+[data-md-color-scheme="slate"] .home-simple .home-hero p,
+[data-md-color-scheme="slate"] .home-simple .home-note {
+  color: #a9c3d4;
+}
+
+[data-md-color-scheme="slate"] .home-simple > ul a {
+  color: #9fd9ef;
+}
+
+[data-md-color-scheme="slate"] .home-simple .home-actions a.home-actions__ghost {
+  border-color: rgba(127, 217, 255, 0.3);
+  background: rgba(255, 255, 255, 0.08);
+  color: #bfe7f5;
+}
+
+[data-md-color-scheme="slate"] .md-typeset .site-stats strong {
+  color: #9fd9ef;
+}
+
+[data-md-color-scheme="slate"] .md-typeset .club-gallery a {
+  border-color: rgba(127, 217, 255, 0.2);
+  background: #12232d;
+}
+
+@media (max-width: 700px) {
+  .home-simple .home-hero {
+    padding: 1.25rem;
   }
 
-  .smu-home .smu-section-head + ul {
+  .home-simple .home-hero h1 {
+    font-size: clamp(1.45rem, 6.5vw, 1.95rem);
+    line-height: 1.3;
+  }
+
+  .home-simple > ul {
     columns: 1;
   }
 
-  .smu-home .smu-map-card {
-    box-shadow: 7px 7px 0 rgba(36, 90, 74, 0.07);
+  .md-typeset .club-gallery {
+    grid-template-columns: 1fr;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .smu-home a {
+  .home-simple .home-actions a {
     transition: none;
   }
 }

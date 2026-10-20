@@ -181,6 +181,15 @@
   text-align: right;
 }
 
+.md-typeset .campus-source {
+  margin-top: 1.6rem;
+  padding-top: 0.8rem;
+  border-top: 1px dashed rgba(47, 107, 255, 0.18);
+  color: var(--md-default-fg-color--light);
+  font-size: 0.78rem;
+  line-height: 1.7;
+}
+
 [data-md-color-scheme="slate"] .home-simple .home-hero {
   border-color: rgba(127, 217, 255, 0.2);
   background:

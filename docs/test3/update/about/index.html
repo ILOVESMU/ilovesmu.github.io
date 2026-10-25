@@ -1,0 +1,40 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="glass"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="按章节学习儿童少年卫生学，或直接进入题库练习。"><meta name="theme-color" content="#2f6bff"><link rel="icon" type="image/png" href="/test3/update/images/brand-clock.png"><script>
+      (() => {
+        try {
+          const saved = localStorage.getItem("cah.theme.v1");
+          if (saved === "glass" || saved === "night" || saved === "gold" || saved === "green") {
+            document.documentElement.dataset.theme = saved;
+          }
+        } catch {}
+      })();
+    </script><title>来源说明 · 儿童少年卫生学</title><link rel="stylesheet" href="/test3/update/_astro/BaseLayout.mRlZRxfO.css"></head><body><a class="skip-link" href="#main">跳到主要内容</a><header class="site-header"><a class="brand" href="/test3/update/"><span class="brand-mark" aria-hidden="true"><img class="brand-clock" src="/test3/update/images/brand-clock.png" alt=""></span><span class="brand-copy"><strong>儿童少年卫生学</strong></span></a><div class="header-actions"><nav class="site-nav" aria-label="主导航"><a href="/test3/update/learn/">顺序学习</a><a href="/test3/update/practice/">纯刷题</a><a href="/test3/update/wrong/">错题本</a><a href="/test3/update/about/" class="active">来源说明</a><a href="/test3/update/" class="nav-update">更新版</a></nav><div class="theme-switcher" role="group" aria-label="配色主题"><button type="button" data-theme-choice="glass">冰蓝</button><button type="button" data-theme-choice="night">夜间</button><button type="button" data-theme-choice="gold">黑金</button><button type="button" data-theme-choice="green">原绿</button></div></div></header><main id="main"><section class="about-page"><header class="reference-heading"><p class="kicker">内容说明</p><h1>来源与差异</h1><p>课件、教材、老师测验和公众号资料分开标注，不把不同来源当成同一等级。</p></header><div class="about-grid"><article><h2>课件</h2><p>章节重点和课堂口径的主要依据。题目解析优先引用课件页码。</p></article><article><h2>教材</h2><p>用于补全定义、分类和机制。教材版次会在引用中标明。</p></article><article><h2>往年参考</h2><p>公众号文章和考试回忆，用来看往年都考过什么。非官方原卷，不能替代课件和教材。</p></article></div><div class="about-note"><h2>差异怎么处理</h2><p>如果课件、教材和外部资料说法不同，题目会显示“资料差异”或“题库疑点”。 页面先说明考试应如何作答，再说明差异原因，不会悄悄改掉原题。</p></div><div class="about-note"><h2>记忆辅助怎么用</h2><p>“这一章怎么记”和“这题怎么记”只是复习时用的抓手，不替代原文。 联想和章节正文、课件或教材不一致时，还是按课程材料来。</p></div><div class="about-note"><h2>教材版本</h2><p>当前对照的是《儿童少年卫生学》第 9 版，陶芳标、武丽杰主编，人民卫生出版社，2025 年 6 月。 课件讲次与教材印刷章号不完全一致时，章节顺序以课程讲次为准。</p></div></section></main><footer class="site-footer"><p>内容依据课程课件、指定教材和公开资料整理。个人理解部分会单独标注。</p><p>内容以课程课件和指定教材为准；本站不替代课堂学习。</p><div class="visit-stats" aria-label="阅读统计"><span id="busuanzi_container_page_pv" style="display:none">本文阅读 <strong id="busuanzi_page_pv">...</strong> 次</span><span id="busuanzi_container_site_pv" style="display:none">本站访问 <strong id="busuanzi_site_pv">...</strong> 次</span></div></footer><script src="https://busuanzi.9420.ltd/js"></script><script>
+      (() => {
+        const colors = {
+          glass: "#2f6bff",
+          night: "#0a1224",
+          gold: "#0b0906",
+          green: "#f3f6f4",
+        };
+        const choices = [...document.querySelectorAll("[data-theme-choice]")];
+        const apply = (theme) => {
+          document.documentElement.dataset.theme = theme;
+          const meta = document.querySelector('meta[name="theme-color"]');
+          if (meta) {
+            meta.setAttribute("content", colors[theme] || colors.glass);
+          }
+          try {
+            localStorage.setItem("cah.theme.v1", theme);
+          } catch {}
+          choices.forEach((button) => {
+            button.setAttribute(
+              "aria-pressed",
+              String(button.dataset.themeChoice === theme),
+            );
+          });
+        };
+        choices.forEach((button) => {
+          button.addEventListener("click", () => apply(button.dataset.themeChoice));
+        });
+        apply(document.documentElement.dataset.theme || "glass");
+      })();
+    </script></body></html>

@@ -6,6 +6,8 @@ theme:
   name: material
   language: zh
   custom_dir: overrides
+  logo: test3/images/brand-clock.png
+  favicon: test3/images/brand-clock.png
 
 
   palette: 
@@ -210,9 +212,13 @@ nav:
     - 引言: 学生天地/引言.md
     - 学生来稿：绩点与生活节奏: 学生天地/1.md
 
-  - 投稿、后记及测试区:
+  - 投稿和后记:
     - 引言: 投稿、后记及测试区/引言.md
     - 我要投稿: 投稿、后记及测试区/我要投稿.md
     - 后记: 投稿、后记及测试区/后记.md
+
+  - 测试区:
+    - 测试工具与时间: 测试区/index.md
+    - 现代食品安全检测技术: 测试区/现代食品安全检测技术.md
 
     

@@ -12,7 +12,7 @@
     --ink:#1B2430;
     --ink-2:#5A6675;
     --ink-3:#8A94A3;
-    --colw:216px;
+    --colw:100px;
     --red:#E23D30;
     --today:#FFF7E0;
     --shadow:0 1px 2px rgba(16,24,40,.06),0 8px 24px rgba(16,24,40,.06);
@@ -72,28 +72,28 @@
   .day{
     flex:0 0 var(--colw);width:var(--colw);
     border-right:1px solid var(--line);
-    padding:0 0 20px;background:#fff;position:relative;
+    padding:0 0 16px;background:#fff;position:relative;
   }
   .day.today{background:var(--today)}
   .day-h{
     position:sticky;top:40px;z-index:4;background:inherit;
-    padding:14px 16px 12px;border-bottom:1px solid var(--line);
+    padding:9px 8px 8px;border-bottom:1px solid var(--line);
   }
   .day.today .day-h{padding-bottom:7px}
   .dh-top{display:flex;align-items:baseline;gap:6px}
-  .dh-date{font-size:19px;font-weight:700;letter-spacing:-.2px}
-  .dh-wd{font-size:12.5px;color:var(--ink-3)}
-  .dh-week{font-size:11px;color:var(--ink-3);margin-left:auto}
+  .dh-date{font-size:14px;font-weight:700;letter-spacing:-.2px}
+  .dh-wd{font-size:10.5px;color:var(--ink-3)}
+  .dh-week{font-size:9.5px;color:var(--ink-3);margin-left:auto}
   .today-pill{
     display:inline-block;margin-top:7px;font-size:11px;color:#8A5A00;
     background:#FFE8A8;border-radius:5px;padding:1px 6px;font-weight:600;
   }
-  .col-body{padding:14px 14px 0}
+  .col-body{padding:7px 6px 0}
 
   /* ---------- 卡片 ---------- */
   .card{
-    position:relative;border-radius:16px;padding:18px 18px 16px 22px;margin-bottom:14px;
-    min-height:170px;display:flex;flex-direction:column;
+    position:relative;border-radius:12px;padding:11px 7px 9px 11px;margin-bottom:9px;
+    min-height:136px;display:flex;flex-direction:column;
     cursor:pointer;overflow:hidden;transition:transform .14s, box-shadow .14s, opacity .2s;
     border:1px solid rgba(0,0,0,.05);
   }
@@ -105,21 +105,20 @@
   .card.past{opacity:.46;filter:grayscale(.35)}
   .card.past:hover{opacity:.85}
   .c-chip{
-    display:inline-block;font-size:12px;font-weight:800;letter-spacing:0;
-    background:rgba(255,255,255,.62);color:inherit;border-radius:7px;padding:4px 10px;margin-bottom:12px;
-    max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
-    vertical-align:middle;
+    display:block;width:fit-content;max-width:100%;font-size:10px;font-weight:800;letter-spacing:0;
+    background:rgba(255,255,255,.62);color:inherit;border-radius:5px;padding:3px 5px;margin-bottom:7px;
+    line-height:1.25;word-break:break-all;vertical-align:middle;
   }
-  .c-title{font-size:15.5px;font-weight:700;line-height:1.55;margin-bottom:10px;color:inherit}
-  .c-time{font-size:13px;font-weight:700;opacity:.8;line-height:1.4;color:inherit;margin-top:auto}
+  .c-title{font-size:13px;font-weight:700;line-height:1.45;margin-bottom:6px;color:inherit;word-break:break-word}
+  .c-time{font-size:10.5px;font-weight:700;opacity:.8;line-height:1.35;color:inherit;margin-top:auto}
   .c-kind{
     position:absolute;right:8px;bottom:9px;font-size:10px;font-weight:800;
     background:rgba(255,255,255,.22);border-radius:4px;padding:1px 5px;color:#fff;opacity:.95;
   }
   /* 新增 DDL 的“新”角标（占右上角，与类型徽标互斥） */
   .c-new{
-    position:absolute;right:10px;top:10px;z-index:3;
-    font-size:12px;font-weight:800;letter-spacing:.5px;line-height:1.3;
+    position:absolute;right:5px;top:5px;z-index:3;
+    font-size:10px;font-weight:800;letter-spacing:.3px;line-height:1.3;
     color:#C22A2E;background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:6px;padding:2px 9px;
     box-shadow:0 2px 6px rgba(0,0,0,.12);
   }
@@ -224,17 +223,37 @@
   }
   .wcol:last-child{border-right:0}
   .wcol.today{background:var(--today)}
-  .wcol-h{padding:14px 16px;border-bottom:1px solid var(--line);background:inherit}
+  .wcol-h{padding:10px 9px;border-bottom:1px solid var(--line);background:inherit}
   .wcol.today .wcol-h{box-shadow:inset 0 -2px 0 #F2C14E}
   .wh-wd{font-size:11px;color:var(--ink-3)}
-  .wh-date{font-size:19px;font-weight:700;margin-top:3px;letter-spacing:-.2px}
-  .wcol-b{padding:14px 14px 20px;flex:1}
+  .wh-date{font-size:15px;font-weight:700;margin-top:2px;letter-spacing:-.2px}
+  .wcol-b{padding:7px 6px 14px;flex:1}
   .empty{padding:16px 12px;font-size:11.5px;color:#B4BCC8;text-align:center;line-height:1.6}
   .wcol .card{margin-bottom:14px}
-  .wcol .card .c-title{font-size:15px}
+  .wcol .card .c-title{font-size:13px}
   @media (max-width:900px){
     .week-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
     .wcol{min-height:auto}
+  }
+  /* ---------- 手机端：去掉左右留白，铺满屏宽 ---------- */
+  @media (max-width:640px){
+    :root{--colw:88px}
+    .c-title{font-size:12px}
+    .c-chip{font-size:9.5px;padding:2px 4px}
+    .dh-date{font-size:13px}
+    .topbar{padding:13px 12px;gap:10px}
+    main{padding:14px 0 28px}
+    .stage{border-radius:0;border-left:0;border-right:0;box-shadow:0 1px 2px rgba(16,24,40,.06)}
+    .stage .dragwrap{padding:12px 10px 14px}
+    .hint-tip{margin:12px 10px 0}
+    .wk-bar{padding:12px 12px;border-left:0;border-right:0;border-radius:0;gap:8px}
+    .week-grid{border-left:0;border-right:0;border-radius:0}
+    .wcol-h{padding:11px 9px}
+    .wh-date{font-size:16px}
+    .wcol-b{padding:10px 8px 16px}
+    .modal{padding:10px}
+    .sheet-h{padding:16px 16px 12px}
+    .sheet-b{padding:6px 16px 18px}
   }
 
   /* ---------- 详情弹层 ---------- */
@@ -499,7 +518,7 @@ const thumb    = document.getElementById("thumb");
     // 定位到本周（周一）开头，避免出现半截的第一列
     const idx  = (TODAY.getDay() + 6) % 7;                       // 今天在本周的第几天
     const di   = Math.round((TODAY - RANGE_START) / DAY) - idx;  // 本周一距起点多少天
-    const colW = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--colw')) || 152;
+    const colW = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--colw')) || 100;
     if(di > 0) sc.scrollLeft = Math.max(0, di * colW);
     syncDragbar();
   });

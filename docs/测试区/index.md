@@ -98,11 +98,11 @@
     </tr>
     <tr>
       <td>
-        <a class="test-table__content" href="课程作业与DDL汇总表/">
+        <a class="test-table__content" href="课程DDL时间轴.html">
           <span class="test-table__number">06</span>
           <span class="test-table__main">
-            <strong>课程作业与 DDL 汇总表</strong>
-            <small>汇总课程作业、实验报告、课堂汇报和考试截止时间。</small>
+            <strong>课程 DDL 时间轴</strong>
+            <small>按日期汇总课程作业、实验报告、课堂汇报和考试节点。</small>
           </span>
         </a>
       </td>

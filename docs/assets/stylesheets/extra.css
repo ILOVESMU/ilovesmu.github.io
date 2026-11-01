@@ -13,11 +13,12 @@
      --smu-ink         #103743  深色正文
 
    可访问性说明
-     导航条上的文字为白色（选中的 12 个顶级栏目文字都在这一条上），
-     因此导航渐变的亮度上限被 WCAG AA 的 4.5:1 约束在“深青”区间
-     （#1167FF 4.76:1 → #0B7F8F 4.69:1）。
-     明亮青 / 薄荷青 / 气泡高光以“细亮线、玻璃光斑、焦点环、激活下划线”
+     导航条上的文字为白色（12 个顶级栏目文字都在这一条上），
+     按用户要求不做深色底片，改用「纯白 + 700/800 字重 + 放大字号 +
+     深色投影」来提升在亮青绿渐变上的可读性。
+     明亮青 / 薄荷青 / 气泡高光以“细亮线、光斑、焦点环、激活下划线”
      的方式出现，不承载小字号文字，从而既有汽水感又不牺牲可读性。
+     全站不使用毛玻璃（无 backdrop-filter），面板一律实色冷白 / 实色深青。
    ========================================================================== */
 
 /* --------------------------------------------------------------------------
@@ -47,23 +48,23 @@
   --smu-line-soft: rgba(16, 55, 67, 0.08);
   --smu-line-cyan: rgba(0, 207, 232, 0.34);
 
-  /* 导航（白字，AA 安全区间） */
-  --smu-nav-1: #0f63f7;
-  --smu-nav-2: #0a6bd8;
-  --smu-nav-3: #0a70a2;
-  --smu-nav-4: #0b7280;
+  /* 导航：亮蓝 → 亮青 → 薄荷青，白字直接使用纯白粗体 + 深色投影提升可读性 */
+  --smu-nav-1: #0a4fd0;
+  --smu-nav-2: #0b5fea;
+  --smu-nav-3: #00a8ce;
+  --smu-nav-4: #1fe0c2;
   --smu-nav-grad: linear-gradient(
     135deg,
     var(--smu-nav-1) 0%,
-    var(--smu-nav-2) 34%,
-    var(--smu-nav-3) 70%,
+    var(--smu-nav-2) 26%,
+    var(--smu-nav-3) 68%,
     var(--smu-nav-4) 100%
   );
   --smu-nav-grad-tabs: linear-gradient(
     135deg,
     var(--smu-nav-1) 0%,
-    var(--smu-nav-2) 34%,
-    var(--smu-nav-3) 70%,
+    var(--smu-nav-2) 20%,
+    var(--smu-nav-3) 56%,
     var(--smu-nav-4) 100%
   );
   /* 汽水亮线：只做装饰，不承载文字 */
@@ -124,22 +125,21 @@
   --md-footer-fg-color--light: #b9e6e6;
   --md-footer-fg-color--lighter: #8fc7cb;
 
-  --smu-glass-bg: linear-gradient(
+  /* 面板底色：实色冷白，不使用毛玻璃 / 背景模糊 */
+  --smu-panel-bg: linear-gradient(
     150deg,
-    rgba(240, 254, 255, 0.74) 0%,
-    rgba(226, 250, 252, 0.62) 52%,
-    rgba(212, 246, 250, 0.56) 100%
+    #f7feff 0%,
+    #effcfd 52%,
+    #e5f8fa 100%
   );
-  --smu-glass-edge: rgba(255, 255, 255, 0.78);
-  --smu-glass-inner: rgba(255, 255, 255, 0.95);
-  --smu-glass-solid: rgba(246, 255, 255, 0.97);
+  --smu-panel-edge: rgba(0, 167, 196, 0.2);
 
-  /* hero / 测试区玻璃：三种克制的气泡光斑 */
-  --smu-hero-glass: linear-gradient(
+  /* hero / 测试区：实色冷白底 + 三种克制的气泡光斑（不再做半透明玻璃） */
+  --smu-hero-bg: linear-gradient(
     148deg,
-    rgba(255, 255, 255, 0.62) 0%,
-    rgba(242, 254, 255, 0.44) 46%,
-    rgba(218, 250, 252, 0.34) 100%
+    #ffffff 0%,
+    #f5fdff 46%,
+    #e7fafd 100%
   );
   --smu-hero-tint-fizz: rgba(215, 255, 114, 0.2);
   --smu-hero-tint-mint: rgba(24, 221, 176, 0.28);
@@ -198,40 +198,37 @@
   --smu-focus: #7ceef8;
   --smu-focus-halo: rgba(124, 238, 248, 0.24);
 
-  --smu-nav-1: #073a5c;
-  --smu-nav-2: #07556f;
-  --smu-nav-3: #086f80;
-  --smu-nav-4: #0a7d72;
+  --smu-nav-1: #063a63;
+  --smu-nav-2: #075a78;
+  --smu-nav-3: #078a90;
+  --smu-nav-4: #0fa892;
   --smu-nav-grad: linear-gradient(
     135deg,
     var(--smu-nav-1) 0%,
-    var(--smu-nav-2) 36%,
-    var(--smu-nav-3) 72%,
+    var(--smu-nav-2) 34%,
+    var(--smu-nav-3) 70%,
     var(--smu-nav-4) 100%
   );
   --smu-nav-grad-tabs: linear-gradient(
     135deg,
     var(--smu-nav-1) 0%,
-    var(--smu-nav-2) 36%,
-    var(--smu-nav-3) 72%,
+    var(--smu-nav-2) 30%,
+    var(--smu-nav-3) 64%,
     var(--smu-nav-4) 100%
   );
-
-  --smu-glass-bg: linear-gradient(
+  --smu-panel-bg: linear-gradient(
     150deg,
-    rgba(18, 62, 74, 0.72) 0%,
-    rgba(12, 48, 58, 0.6) 52%,
-    rgba(9, 40, 48, 0.55) 100%
+    #0e3641 0%,
+    #0b2c35 52%,
+    #092630 100%
   );
-  --smu-glass-edge: rgba(150, 246, 233, 0.24);
-  --smu-glass-inner: rgba(196, 255, 246, 0.16);
-  --smu-glass-solid: rgba(9, 38, 46, 0.96);
+  --smu-panel-edge: rgba(124, 238, 248, 0.26);
 
-  --smu-hero-glass: linear-gradient(
+  --smu-hero-bg: linear-gradient(
     148deg,
-    rgba(18, 62, 74, 0.68) 0%,
-    rgba(11, 46, 56, 0.6) 46%,
-    rgba(8, 38, 46, 0.54) 100%
+    #103b46 0%,
+    #0c2f39 46%,
+    #0a2731 100%
   );
   --smu-hero-tint-fizz: rgba(190, 240, 130, 0.11);
   --smu-hero-tint-mint: rgba(24, 221, 176, 0.2);
@@ -275,14 +272,15 @@ body {
 }
 
 /* --------------------------------------------------------------------------
-   4. 顶部导航：蓝色 → 青色 135° 渐变
+   4. 顶部导航：亮蓝 → 亮青 → 薄荷青 135° 渐变
+      白字，对比度由深青色「胶囊」底片承载（胶囊才是实际背景）
    -------------------------------------------------------------------------- */
 
 .md-header {
-  background-color: var(--smu-nav-3);
+  background-color: var(--smu-nav-2);
   background-image: var(--smu-nav-grad);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.34),
     0 10px 26px -22px rgba(3, 40, 52, 0.9);
   color: #fff;
 }
@@ -290,11 +288,29 @@ body {
 .md-header__title,
 .md-header__topic {
   color: #fff;
-  text-shadow: 0 1px 2px rgba(3, 40, 52, 0.3);
+  font-family: var(--smu-font-sans);
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  text-shadow:
+    0 1px 3px rgba(3, 40, 52, 0.5),
+    0 0 12px rgba(3, 40, 52, 0.3);
+}
+
+/* 右侧工具栏按钮：不做底片，图标用深色投影在亮青底上保持可辨识 */
+.md-header__option .md-header__button,
+.md-header__button[for="__search"] {
+  transition: background-color 160ms ease;
+}
+
+.md-header__option .md-header__button:hover,
+.md-header__button[for="__search"]:hover {
+  background-color: rgba(3, 38, 50, 0.22);
 }
 
 .md-header__button {
-  color: rgba(255, 255, 255, 0.94);
+  color: #fff;
+  filter: drop-shadow(0 1px 2px rgba(2, 36, 48, 0.55));
 }
 
 .md-header__button:hover {
@@ -309,7 +325,7 @@ body {
 .md-header__button.md-logo img,
 .md-header__button.md-logo svg {
   border-radius: 0.35rem;
-  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.32);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.42);
 }
 
 /* 栏目条 */
@@ -317,7 +333,7 @@ body {
   position: relative;
   background-color: var(--smu-nav-4);
   background-image: var(--smu-nav-grad-tabs);
-  border-top: 1px solid rgba(255, 255, 255, 0.14);
+  border-top: 1px solid rgba(255, 255, 255, 0.18);
   color: #fff;
 }
 
@@ -333,34 +349,55 @@ body {
   pointer-events: none;
 }
 
+/* 每个栏目：纯白粗体大字 + 深色投影，直接坐在渐变上，不加底片 */
+.md-tabs__item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding-left: 0.1rem;
+  padding-right: 0.1rem;
+}
+
 .md-tabs__link {
-  color: rgba(255, 255, 255, 0.94);
+  align-items: center;
+  margin-top: 0;
+  padding: 0.25rem 0.24rem;
+  border-radius: 0.35rem;
+  background-color: transparent;
+  color: #fff;
   font-family: var(--smu-font-sans);
-  font-size: 0.72rem;
+  font-size: 0.8rem;
+  font-weight: 700;
   letter-spacing: 0.02em;
   opacity: 1;
-  transition: transform 200ms ease, color 160ms ease;
+  text-shadow:
+    0 1px 2px rgba(2, 36, 48, 0.55),
+    0 0 10px rgba(2, 36, 48, 0.28);
+  transition: color 160ms ease, transform 200ms ease;
 }
 
 .md-tabs__link:hover {
+  background-color: transparent;
   color: #fff;
+  transform: translateY(-1px);
 }
 
+/* 激活栏目：更粗更亮 + 底部一条气泡高光 */
 .md-tabs__item--active .md-tabs__link {
+  background-color: transparent;
   color: #fff;
-  font-weight: 700;
+  font-weight: 800;
+  text-shadow:
+    0 1px 3px rgba(2, 36, 48, 0.62),
+    0 0 12px rgba(2, 36, 48, 0.34);
 }
 
-/* 激活栏目：气泡高光小下划线 */
-.md-tabs__item--active {
-  position: relative;
-}
-
+/* 激活栏目的气泡高光下划线 */
 .md-tabs__item--active::after {
   content: "";
   position: absolute;
-  inset-inline: 0.5rem;
-  bottom: 0;
+  inset-inline: 0.3rem;
+  bottom: 0.05rem;
   z-index: 2;
   height: 3px;
   border-radius: 2px;
@@ -885,7 +922,7 @@ body {
   isolation: isolate;
   overflow: hidden;
   padding: clamp(1.5rem, 4.2vw, 2.75rem);
-  border: 1px solid var(--smu-glass-edge);
+  border: 1px solid var(--smu-panel-edge);
   border-radius: var(--smu-radius-lg);
   background-image:
     radial-gradient(
@@ -903,16 +940,10 @@ body {
       var(--smu-hero-tint-cyan),
       transparent 42%
     ),
-    var(--smu-hero-glass);
-  -webkit-backdrop-filter: blur(16px) saturate(170%);
-  backdrop-filter: blur(16px) saturate(170%);
+    var(--smu-hero-bg);
   box-shadow:
-    inset 0 1px 0 var(--smu-glass-inner),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.42),
-    inset 0 -1px 0 rgba(0, 207, 232, 0.16),
-    0 28px 66px -38px rgba(16, 55, 67, 0.62),
-    0 36px 80px -56px rgba(24, 221, 176, 0.8),
-    0 0 0 1px rgba(0, 207, 232, 0.18);
+    0 22px 52px -38px rgba(16, 55, 67, 0.5),
+    0 0 0 1px rgba(0, 207, 232, 0.14);
 }
 
 /* 气泡颗粒：极淡的碳酸感，只在左上角铺开 */
@@ -940,7 +971,7 @@ body {
     rgba(0, 0, 0, 0.5) 38%,
     transparent 70%
   );
-  opacity: 0.42;
+  opacity: 0.26;
 }
 
 /* 细亮边：顶部一条很细的高光 */
@@ -1090,7 +1121,7 @@ body {
   max-width: 60rem;
   margin: 0 auto;
   padding: clamp(1.15rem, 3vw, 2.2rem);
-  border: 1px solid var(--smu-glass-edge);
+  border: 1px solid var(--smu-panel-edge);
   border-radius: var(--smu-radius-lg);
   background-image:
     radial-gradient(
@@ -1103,16 +1134,10 @@ body {
       var(--smu-panel-tint-cyan),
       transparent 72%
     ),
-    var(--smu-glass-bg);
-  -webkit-backdrop-filter: blur(15px) saturate(165%);
-  backdrop-filter: blur(15px) saturate(165%);
+    var(--smu-panel-bg);
   box-shadow:
-    inset 0 1px 0 var(--smu-glass-inner),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.5),
-    inset 0 -1px 0 rgba(0, 207, 232, 0.14),
-    0 28px 62px -42px rgba(16, 55, 67, 0.6),
-    0 34px 74px -54px rgba(0, 207, 232, 0.75),
-    0 0 0 1px rgba(0, 207, 232, 0.14);
+    0 22px 48px -40px rgba(16, 55, 67, 0.48),
+    0 0 0 1px rgba(0, 207, 232, 0.12);
 }
 
 .test-hub > h1:first-child {
@@ -1432,6 +1457,135 @@ body {
   color: #a9d3d0;
 }
 
+/* 课程作业与 DDL：桌面完整展开，手机在表格内部横向滚动 */
+.md-typeset .ddl-download {
+  margin: 1rem 0 1.1rem;
+}
+
+.md-typeset .ddl-download a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.4rem;
+  padding: 0.45rem 1rem;
+  border: 1px solid rgba(0, 167, 196, 0.35);
+  border-radius: 999px;
+  background-color: #f4ffff;
+  color: var(--smu-blue-deep);
+  font-family: var(--smu-font-sans);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.md-typeset .ddl-download a:hover {
+  border-color: var(--smu-cyan);
+  background-color: #e9fcff;
+}
+
+.md-typeset .ddl-table-wrap {
+  max-width: 100%;
+  overflow: auto;
+  border: 1px solid var(--smu-line-cyan);
+  border-radius: var(--smu-radius-md);
+  background-color: #f8ffff;
+  -webkit-overflow-scrolling: touch;
+}
+
+.md-typeset .ddl-table {
+  width: max-content;
+  min-width: 86rem;
+  margin: 0;
+  border: 0;
+  table-layout: auto;
+  font-size: 0.72rem;
+}
+
+.md-typeset .ddl-table th,
+.md-typeset .ddl-table td {
+  padding: 0.8rem 0.75rem;
+  border-right: 1px solid var(--smu-line-soft);
+  border-bottom: 1px solid var(--smu-line-soft);
+  vertical-align: top;
+  line-height: 1.65;
+  overflow-wrap: anywhere;
+}
+
+.md-typeset .ddl-table th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background-color: #e9fbff;
+  color: var(--smu-ink);
+  font-family: var(--smu-font-sans);
+  white-space: nowrap;
+}
+
+.md-typeset .ddl-table th:nth-child(1),
+.md-typeset .ddl-table td:nth-child(1) {
+  width: 4rem;
+}
+
+.md-typeset .ddl-table th:nth-child(2),
+.md-typeset .ddl-table td:nth-child(2) {
+  width: 8rem;
+}
+
+.md-typeset .ddl-table th:nth-child(3),
+.md-typeset .ddl-table td:nth-child(3) {
+  width: 11rem;
+}
+
+.md-typeset .ddl-table th:nth-child(4),
+.md-typeset .ddl-table td:nth-child(4) {
+  width: 27rem;
+}
+
+.md-typeset .ddl-table th:nth-child(5),
+.md-typeset .ddl-table td:nth-child(5) {
+  width: 12rem;
+}
+
+.md-typeset .ddl-table th:nth-child(6),
+.md-typeset .ddl-table td:nth-child(6) {
+  width: 13rem;
+}
+
+.md-typeset .ddl-table th:nth-child(7),
+.md-typeset .ddl-table td:nth-child(7) {
+  width: 11rem;
+}
+
+.md-typeset .ddl-table th:nth-child(8),
+.md-typeset .ddl-table td:nth-child(8) {
+  width: 5rem;
+}
+
+.md-typeset .ddl-table tbody tr:nth-child(even) {
+  background-color: rgba(0, 207, 232, 0.035);
+}
+
+[data-md-color-scheme="slate"] .md-typeset .ddl-download a {
+  border-color: rgba(124, 238, 248, 0.32);
+  background-color: #0b2f38;
+  color: #9ff4f8;
+}
+
+[data-md-color-scheme="slate"] .md-typeset .ddl-download a:hover {
+  background-color: #103d48;
+}
+
+[data-md-color-scheme="slate"] .md-typeset .ddl-table-wrap {
+  background-color: #082129;
+}
+
+[data-md-color-scheme="slate"] .md-typeset .ddl-table th {
+  background-color: #0c3440;
+  color: #e4fbf7;
+}
+
+[data-md-color-scheme="slate"] .md-typeset .ddl-table tbody tr:nth-child(even) {
+  background-color: rgba(24, 221, 176, 0.05);
+}
+
 /* --------------------------------------------------------------------------
    14. 页脚
    -------------------------------------------------------------------------- */
@@ -1509,42 +1663,12 @@ html .md-footer-meta.md-typeset a:hover {
 }
 
 /* --------------------------------------------------------------------------
-   16. backdrop-filter 不可用时的实色降级
-   -------------------------------------------------------------------------- */
-
-@supports not (
-  (backdrop-filter: blur(2px)) or (-webkit-backdrop-filter: blur(2px))
-) {
-  .home-simple .home-hero,
-  .test-hub {
-    background-image: linear-gradient(
-      150deg,
-      rgba(255, 255, 255, 0.97) 0%,
-      rgba(238, 253, 255, 0.95) 55%,
-      rgba(226, 250, 252, 0.94) 100%
-    );
-    box-shadow:
-      inset 0 1px 0 #fff,
-      0 20px 46px -34px rgba(16, 55, 67, 0.5);
-  }
-
-  [data-md-color-scheme="slate"] .home-simple .home-hero,
-  [data-md-color-scheme="slate"] .test-hub {
-    background-image: linear-gradient(
-      150deg,
-      rgba(11, 46, 56, 0.98) 0%,
-      rgba(8, 38, 46, 0.98) 100%
-    );
-  }
-}
-
-/* --------------------------------------------------------------------------
-   17. 响应式
+   16. 响应式
    -------------------------------------------------------------------------- */
 
 @media screen and (max-width: 60em) {
   .md-header__title {
-    font-size: 0.82rem;
+    font-size: 0.88rem;
   }
 
   .md-search__form {

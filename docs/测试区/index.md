@@ -96,6 +96,22 @@
         </time>
       </td>
     </tr>
+    <tr>
+      <td>
+        <a class="test-table__content" href="课程作业与DDL汇总表/">
+          <span class="test-table__number">06</span>
+          <span class="test-table__main">
+            <strong>课程作业与 DDL 汇总表</strong>
+            <small>汇总课程作业、实验报告、课堂汇报和考试截止时间。</small>
+          </span>
+        </a>
+      </td>
+      <td>
+        <time class="test-table__date" datetime="2026-11-02">
+          <strong>2026-11-02</strong>
+        </time>
+      </td>
+    </tr>
   </tbody>
 </table>
 

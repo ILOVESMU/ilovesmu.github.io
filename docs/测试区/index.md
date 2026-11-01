@@ -80,6 +80,22 @@
         </time>
       </td>
     </tr>
+    <tr>
+      <td>
+        <a class="test-table__content" href="../fpci/">
+          <span class="test-table__number">05</span>
+          <span class="test-table__main">
+            <strong>食品理化检验学习站</strong>
+            <small>包含顺序学习、题库练习、错题本、勘误与课程搜索。</small>
+          </span>
+        </a>
+      </td>
+      <td>
+        <time class="test-table__date" datetime="2026-11-01">
+          <strong>2026-11-01</strong>
+        </time>
+      </td>
+    </tr>
   </tbody>
 </table>
 

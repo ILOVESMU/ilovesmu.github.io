@@ -1,0 +1,73 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="ice"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="搜索课时正文、知识点与图表说明。"><meta name="theme-color" content="#eef4fc"><link rel="icon" href="/fpci/favicon.svg" type="image/svg+xml"><title>搜索 · 食品理化检验</title><script>
+      (() => {
+        try {
+          const saved = localStorage.getItem("fpc.theme.v1");
+          if (saved === "ice" || saved === "night" || saved === "gold" || saved === "green") {
+            document.documentElement.dataset.theme = saved;
+          }
+        } catch {}
+      })();
+    </script><link rel="stylesheet" href="/fpci/_astro/BaseLayout.HVYQZWRo.css"><link rel="stylesheet" href="/fpci/_astro/index.KHnjJg-6.css"></head><body><a class="skip-link" href="#main">跳到主要内容</a><header class="site-header" data-pagefind-ignore><a class="brand" href="/fpci/"><img class="brand-mark" src="/fpci/logo.png" alt="" width="44" height="44" decoding="async"><span class="brand-copy"><strong>食品理化检验</strong></span></a><div class="header-actions"><nav class="site-nav" aria-label="主导航"><a href="/fpci/learn/">顺序学习</a><a href="/fpci/plan/">5 小时</a><a href="/fpci/practice/">刷题</a><a href="/fpci/wrong/">错题本</a><a href="/fpci/en/">英文考点</a><a href="/fpci/audit/">待核实</a><a href="/fpci/search/" aria-current="page" class="active">搜索</a><a href="/fpci/changelog/">更新日志</a><a href="/fpci/links/">其他网站</a><a href="/fpci/about/">关于</a></nav><div class="theme-switcher" role="group" aria-label="配色主题"><button type="button" data-theme-choice="ice" aria-pressed="false">冰蓝</button><button type="button" data-theme-choice="night" aria-pressed="false">夜间</button><button type="button" data-theme-choice="gold" aria-pressed="false">黑金</button><button type="button" data-theme-choice="green" aria-pressed="false">原绿</button></div></div></header><main id="main"><div class="container narrow"><header class="page-head"><h1>搜索</h1><p>检索 23 个课时的正文。可以按分组筛选；搜索结果里的每条链接都会跳到对应课时。 索引在构建时生成，因此需要构建后的站点才能搜到内容。</p></header><div id="search" class="search-panel" data-pagefind-ignore></div><noscript><p class="standard-note">搜索需要启用 JavaScript。也可以直接进入 <a href="/fpci/learn/">顺序学习</a> 逐页查找。</p></noscript><div id="search-fallback" class="empty-state" hidden><h2>搜索索引还没准备好</h2><p>当前页面找不到 Pagefind 索引（常见于本地开发模式）。构建后的站点会生成索引。</p><div class="empty-actions"><a class="button button-primary" href="/fpci/learn/">按课时浏览</a><a class="button button-quiet" href="/fpci/practice/">去刷题</a></div></div></div><script type="module" src="/fpci/_astro/index.astro_astro_type_script_index_0_lang.BpE1GRaC.js"></script></main><footer class="site-footer" data-pagefind-ignore><p>内容依据课程课件整理；外部标准、教材与网络资料在页面上单独标注来源。</p><p>学习目标分两种：课件原文分级，和本站依据课件结构整理的建议分级——后者不是教师要求，页面上会明确标注。</p><p>本站只保存浏览器的学习状态（已学习、错题、主题），不保存姓名、学号或真实成绩。<a href="/fpci/about/">详细说明</a> ·<a href="/fpci/audit/">待核实清单</a> ·<a href="/fpci/story/">文字游戏（筹备中）</a></p></footer><script>
+      // 站外链接统一新窗口打开，避免读者在正文里跳走找不回来
+      (() => {
+        const mark = () => {
+          document.querySelectorAll('a[href^="http"]').forEach((link) => {
+            try {
+              const url = new URL(link.href, window.location.href);
+              if (url.origin === window.location.origin) return;
+              link.setAttribute("target", "_blank");
+              link.setAttribute("rel", "noopener noreferrer");
+            } catch {}
+          });
+        };
+        if (document.readyState === "loading") {
+          document.addEventListener("DOMContentLoaded", mark, { once: true });
+        } else {
+          mark();
+        }
+      })();
+    </script><script>
+      // 站外链接统一新窗口打开，避免读者在正文里跳走找不回来
+      (() => {
+        const mark = () => {
+          document.querySelectorAll('a[href^="http"]').forEach((link) => {
+            try {
+              const url = new URL(link.href, window.location.href);
+              if (url.origin === window.location.origin) return;
+              link.setAttribute("target", "_blank");
+              link.setAttribute("rel", "noopener noreferrer");
+            } catch {}
+          });
+        };
+        if (document.readyState === "loading") {
+          document.addEventListener("DOMContentLoaded", mark, { once: true });
+        } else {
+          mark();
+        }
+      })();
+    </script><script>
+      (() => {
+        const colors = {
+          ice: "#eef4fc",
+          night: "#0b1220",
+          gold: "#0d0b09",
+          green: "#f4f8f2",
+        };
+        const choices = [...document.querySelectorAll("[data-theme-choice]")];
+        const apply = (theme) => {
+          document.documentElement.dataset.theme = theme;
+          const meta = document.querySelector('meta[name="theme-color"]');
+          if (meta) meta.setAttribute("content", colors[theme] || colors.ice);
+          try {
+            localStorage.setItem("fpc.theme.v1", theme);
+          } catch {}
+          choices.forEach((button) => {
+            button.setAttribute("aria-pressed", String(button.dataset.themeChoice === theme));
+          });
+        };
+        choices.forEach((button) => {
+          button.addEventListener("click", () => apply(button.dataset.themeChoice));
+        });
+        apply(document.documentElement.dataset.theme || "ice");
+      })();
+    </script></body></html>

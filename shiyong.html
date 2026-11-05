@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>SMUTI — 南方医科大学傻乎乎人格测试</title>
+<meta name="theme-color" content="#e8f0fe">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🧬</text></svg>">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+::-webkit-scrollbar{display:none}
+html,body{width:100%;min-height:100vh;overflow-x:hidden;font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',sans-serif;color:#333;-webkit-tap-highlight-color:transparent}
+body{background:#e8f0fe}
+.hero-bg{position:relative;width:100%;min-height:100vh;overflow:hidden}
+.hero-bg::before{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(255,255,255,.85) 0%,rgba(232,240,254,.92) 50%,rgba(232,240,254,1) 100%);z-index:1}
+.hero-bg .bg-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.18;filter:blur(1px) saturate(1.2)}
+.page{min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:0 24px;position:relative;overflow:hidden}
+.hidden{display:none!important}
+.deco-circle{position:fixed;border-radius:50%;pointer-events:none;z-index:0}
+.deco-c1{width:300px;height:300px;top:-80px;left:-80px;background:radial-gradient(circle,rgba(102,126,234,.12),transparent 70%)}
+.deco-c2{width:250px;height:250px;bottom:100px;right:-60px;background:radial-gradient(circle,rgba(240,147,251,.1),transparent 70%)}
+.deco-c3{width:200px;height:200px;top:40%;left:60%;background:radial-gradient(circle,rgba(67,233,123,.08),transparent 70%)}
+#page-index{padding-top:0;justify-content:flex-start}
+.index-inner{width:100%;max-width:440px;margin:0 auto;position:relative;z-index:2}
+.logo-area{display:flex;flex-direction:column;align-items:center;padding-top:50px;margin-bottom:20px}
+.smu-logo{width:72px;height:72px;border-radius:50%;background:#fff;box-shadow:0 2px 20px rgba(0,0,0,.06);display:flex;align-items:center;justify-content:center;margin-bottom:12px;overflow:hidden}
+.smu-logo img{width:56px;height:56px;object-fit:contain}
+.smu-badge{font-size:11px;color:#888;letter-spacing:1px;margin-top:4px}
+.title-area{text-align:center;margin-bottom:28px}
+.title-sm{font-size:13px;color:#667eea;font-weight:600;letter-spacing:4px;margin-bottom:8px}
+.title-main{font-size:clamp(56px,16vw,88px);font-weight:900;letter-spacing:8px;line-height:1.1;background:linear-gradient(135deg,#667eea 0%,#764ba2 40%,#f093fb 70%,#f5576c 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.title-sub{font-size:15px;color:#888;margin-top:8px;letter-spacing:2px}
+.intro-card{background:#fff;border-radius:20px;padding:28px 24px;margin-bottom:20px;box-shadow:0 2px 24px rgba(0,0,0,.04);text-align:center}
+.intro-emoji{font-size:44px;margin-bottom:12px;display:block}
+.intro-text{font-size:15px;color:#555;line-height:1.8}
+.intro-sub{font-size:12px;color:#aaa;margin-top:8px}
+.tags{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-bottom:24px}
+.tag{background:#fff;border:1px solid #e8e8e8;border-radius:20px;padding:7px 14px;font-size:12px;color:#777}
+.btn-wrap{padding:10px 0 24px;width:100%;max-width:440px;margin:0 auto}
+.btn-primary{display:block;width:100%;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border:none;border-radius:50px;padding:16px 0;font-size:17px;font-weight:600;letter-spacing:3px;cursor:pointer;box-shadow:0 8px 30px rgba(102,126,234,.3);transition:transform .2s;position:relative;z-index:2}
+.btn-primary:active{transform:scale(.97)}
+.warning{font-size:11px;color:#bbb;text-align:center;margin-top:14px}
+.credit{font-size:10px;color:#ccc;text-align:center;margin-top:6px}
+#page-quiz{padding-top:16px;padding-bottom:20px;background:#f4f6fb}
+.quiz-inner{width:100%;max-width:440px;margin:0 auto}
+.progress-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.progress-label{font-size:13px;color:#999}
+.progress-dim{font-size:12px;color:#667eea;background:rgba(102,126,234,.1);padding:4px 12px;border-radius:10px}
+.progress-track{height:6px;background:#e8e8e8;border-radius:3px;overflow:hidden;margin-bottom:12px}
+.progress-fill{height:100%;background:linear-gradient(90deg,#667eea,#764ba2);border-radius:3px;transition:width .4s ease}
+.dim-dots{display:flex;gap:6px;margin-bottom:18px}
+.dim-dot{flex:1;text-align:center;padding:6px 0;border-radius:8px;background:#fff;transition:all .3s;font-size:11px;color:#bbb}
+.dim-dot.active{background:rgba(102,126,234,.1);color:#667eea;font-weight:600}
+.question-card{background:#fff;border-radius:18px;padding:26px 22px;margin-bottom:16px;box-shadow:0 2px 16px rgba(0,0,0,.04);animation:fadeIn .4s ease}
+.q-tag{display:inline-block;background:rgba(102,126,234,.08);border-radius:8px;padding:4px 12px;margin-bottom:14px}
+.q-tag span{font-size:11px;color:#667eea}
+.q-text{font-size:16px;color:#333;line-height:1.8;font-weight:500}
+.options{display:flex;flex-direction:column;gap:10px}
+.option{display:flex;align-items:center;gap:12px;background:#fff;border:2px solid #eee;border-radius:14px;padding:13px 14px;cursor:pointer;transition:all .25s;-webkit-tap-highlight-color:transparent;animation:fadeIn .35s ease both;box-shadow:0 1px 6px rgba(0,0,0,.02)}
+.option:nth-child(2){animation-delay:.04s}
+.option:nth-child(3){animation-delay:.08s}
+.option:nth-child(4){animation-delay:.12s}
+.option:nth-child(5){animation-delay:.16s}
+.option:active{transform:scale(.98)}
+.option.selected{background:linear-gradient(135deg,rgba(102,126,234,.06),rgba(118,75,162,.06));border-color:#667eea}
+.option-idx{width:30px;height:30px;border-radius:50%;background:#f4f4f4;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#bbb;flex-shrink:0;transition:all .25s}
+.option.selected .option-idx{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff}
+.option-text{flex:1;font-size:13.5px;color:#666;line-height:1.5}
+.option.selected .option-text{color:#333;font-weight:500}
+.option-check{font-size:14px;color:#667eea;font-weight:700;opacity:0;transition:opacity .2s}
+.option.selected .option-check{opacity:1}
+.next-area{margin-top:18px;width:100%;animation:fadeIn .3s ease}
+#page-result{padding:40px 24px 40px;justify-content:flex-start;background:#f4f6fb}
+.result-inner{width:100%;max-width:440px;margin:0 auto}
+.particles{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0}
+.particle{position:absolute;bottom:-10px;border-radius:50%;animation:rise linear infinite}
+@keyframes rise{0%{transform:translateY(0) scale(1);opacity:.6}100%{transform:translateY(-100vh) scale(0);opacity:0}}
+.result-hero{margin-top:20px;display:flex;flex-direction:column;align-items:center;z-index:1;animation:popIn .6s cubic-bezier(.34,1.56,.64,1)}
+@keyframes popIn{from{opacity:0;transform:scale(.5)}to{opacity:1;transform:scale(1)}}
+.result-emoji{font-size:clamp(72px,20vw,100px);animation:float 3s ease-in-out infinite;margin-bottom:12px}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.type-badge{background:rgba(102,126,234,.1);color:#667eea;font-size:12px;padding:5px 16px;border-radius:20px;letter-spacing:2px;margin-bottom:12px;font-weight:500}
+.result-title{font-size:clamp(36px,10vw,52px);font-weight:900;letter-spacing:4px;text-align:center;background:linear-gradient(135deg,#667eea,#764ba2);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.result-desc{background:#fff;border-radius:18px;padding:22px;margin-top:28px;width:100%;z-index:1;box-shadow:0 2px 16px rgba(0,0,0,.04);animation:slideUp .5s ease .2s both}
+.result-desc p{font-size:15px;color:#666;line-height:1.8}
+.dims-card{background:#fff;border-radius:18px;padding:22px;margin-top:14px;width:100%;z-index:1;box-shadow:0 2px 16px rgba(0,0,0,.04);animation:slideUp .5s ease .3s both}
+.section-title{font-size:14px;font-weight:600;color:#444;margin-bottom:18px;letter-spacing:1px}
+.dim-row{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.dim-row:last-child{margin-bottom:0}
+.dim-lbl{font-size:12px;color:#999;width:76px;flex-shrink:0}
+.dim-track{flex:1;height:10px;background:#f0f0f0;border-radius:5px;overflow:hidden}
+.dim-fill{height:100%;border-radius:5px;transition:width 1s cubic-bezier(.34,1.56,.64,1)}
+.dim-val{font-size:12px;color:#bbb;width:44px;text-align:right;flex-shrink:0}
+.share-card{background:#fff;border-radius:18px;padding:22px;margin-top:14px;width:100%;z-index:1;box-shadow:0 2px 16px rgba(0,0,0,.04);animation:slideUp .5s ease .4s both}
+.share-box{background:#f8f8fa;border:1px solid #eee;border-radius:12px;padding:14px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.share-box p{font-size:13px;color:#888;line-height:1.6}
+.copy-hint{font-size:12px;color:#667eea;text-align:center;margin-top:8px;opacity:0;transition:opacity .3s}
+.copy-hint.show{opacity:1}
+.result-actions{margin-top:24px;width:100%;display:flex;flex-direction:column;gap:12px;z-index:1;animation:slideUp .5s ease .5s both}
+.btn-outline{display:block;width:100%;background:#fff;color:#888;border:2px solid #e8e8e8;border-radius:50px;padding:14px 0;font-size:15px;font-weight:500;text-align:center;letter-spacing:1px;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:all .2s}
+.btn-outline:active{background:#f8f8fa}
+.footer{margin-top:36px;padding-bottom:30px;display:flex;flex-direction:column;align-items:center;gap:5px;z-index:1}
+.footer span{font-size:10px;color:#ccc}
+.footer em{font-style:italic}
+@keyframes fadeIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+@keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+</style>
+</head>
+<body>
+
+<div id="page-index" class="hero-bg">
+  <div class="deco-circle deco-c1"></div>
+  <div class="deco-circle deco-c2"></div>
+  <div class="deco-circle deco-c3"></div>
+  <img class="bg-img" src="https://www.smu.edu.cn/__local/5/F2/E3/63C0D50F51C860A78C6D1A3B3E7_3B1A8C5C_1A8F0.jpg" alt="" onerror="this.style.display='none'">
+  <div class="page" style="padding:0">
+    <div class="index-inner">
+      <div class="logo-area">
+        <div class="smu-logo"><img src="https://www.smu.edu.cn/__local/A/53/1F/3DAE2A7AFABD96D92FBF5B66A2E_63F3B1E7_15A34.png" alt="校徽" onerror="this.parentElement.innerHTML='<span style=&quot;font-size:28px&quot;>🏫</span>'"></div>
+        <div class="smu-badge">SOUTHERN MEDICAL UNIVERSITY</div>
+      </div>
+      <div class="title-area">
+        <div class="title-sm">SILLY MEDICAL UNIVERSITY TYPE IDENTITY</div>
+        <div class="title-main">SMUTI</div>
+        <div class="title-sub">南方医科大学傻乎乎人格测试</div>
+      </div>
+      <div class="intro-card">
+        <span class="intro-emoji">🧬</span>
+        <div class="intro-text">比解剖图谱更懂你，比病理切片更真实。</div>
+        <div class="intro-sub">31道灵魂拷问 · 每题5个选项 · 测测你是南医大的哪种「人」</div>
+      </div>
+      <div class="tags">
+        <div class="tag">🧬 31道灵魂拷问</div>
+        <div class="tag">🏥 南医大专属</div>
+        <div class="tag">🎭 30种人格</div>
+        <div class="tag">💀 3种隐藏</div>
+        <div class="tag">⏱ 5分钟</div>
+        <div class="tag">🔥 纯纯自嘲</div>
+      </div>
+      <div class="btn-wrap">
+        <button class="btn-primary" onclick="startQuiz()">开始测试 →</button>
+        <div class="warning">⚠️ 纯属娱乐，请勿当真</div>
+        <div class="credit">灵感源自 SBTI · 为南医学子而造</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="page-quiz" class="page hidden">
+  <div class="quiz-inner">
+    <div class="progress-header">
+      <span class="progress-label" id="prog-label">第 1 / 31 题</span>
+      <span class="progress-dim" id="prog-dim"></span>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="prog-fill"></div></div>
+    <div class="dim-dots" id="dim-dots"></div>
+    <div class="question-card" id="q-card">
+      <div class="q-tag"><span id="q-tag-text"></span></div>
+      <div class="q-text" id="q-text"></div>
+    </div>
+    <div class="options" id="options-wrap"></div>
+    <div class="next-area hidden" id="next-area">
+      <button class="btn-primary" id="next-btn" onclick="nextQuestion()">下一题 →</button>
+    </div>
+  </div>
+</div>
+
+<div id="page-result" class="page hidden">
+  <div class="particles" id="particles"></div>
+  <div class="result-inner">
+    <div class="result-hero">
+      <div class="result-emoji" id="r-emoji"></div>
+      <div class="type-badge" id="r-type"></div>
+      <div class="result-title" id="r-title"></div>
+    </div>
+    <div class="result-desc"><p id="r-desc"></p></div>
+    <div class="dims-card">
+      <div class="section-title">灵魂四维度</div>
+      <div id="dims-container"></div>
+    </div>
+    <div class="share-card">
+      <div class="section-title">一键分享</div>
+      <div class="share-box" onclick="copyShare()"><p id="share-text"></p></div>
+      <div class="copy-hint" id="copy-hint">已复制到剪贴板 ✓</div>
+    </div>
+    <div class="result-actions">
+      <button class="btn-primary" onclick="retake()">再测一次 🔄</button>
+      <button class="btn-outline" onclick="copyShare()">复制分享文案 📋</button>
+    </div>
+    <div class="footer">
+      <span>SMUTI · Silly Medical University Type Identity</span>
+      <span><em>博学笃行，尚德济世 —— 但今天先摆烂。</em></span>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ===== 31题·每题5选项·独立分值 ===== */
+var Q=[
+  /* ===== B 博学 Brain (0-6) ===== */
+  {dim:'B',dN:'博学 Brain',text:'南医大是指？',o:['南方酱料大学','南方医科大学','南京医科大学','南通大学医学院','什么鬼'],sc:[2,5,3,2,1]},
+  {dim:'B',dN:'博学 Brain',text:'你的期末复习方式是？',o:['背课本','备课本','悲课本','悖课本','焙课本'],sc:[5,4,3,2,1]},
+  {dim:'B',dN:'博学 Brain',text:'第一次走进解剖实验室，你的反应是？',o:['肃然起敬salute','捂口鼻，辨方向，低姿前行','摸摸摸','拍拍拍','怎样复读'],sc:[5,4,3,2,1]},
+  {dim:'B',dN:'博学 Brain',text:'显微镜下看不清？',o:['显微镜坏了','我坏了','标本坏了','别人都坏了','出题人坏了'],sc:[5,4,3,2,1]},
+  {dim:'B',dN:'博学 Brain',text:'老师上课提问，你会？',o:['为什么要提问','为什么要上课','为什么有老师','为什么有问题','别点我别点我'],sc:[5,4,3,2,1]},
+  {dim:'B',dN:'博学 Brain',text:'你觉得学医最荒谬的一件事是？',o:['背了一整本书，考试只考三页PPT','学了五年才能给人看病，隔壁专业大三就实习了','人体居然只有这么几个零件，要学这么多门课','笔记到毕业都没翻过第二遍','考试前觉得啥也不会，考完发现确实啥也不会'],sc:[5,4,3,2,1]},
+  {dim:'B',dN:'博学 Brain',text:'你觉得医学学习最重要的是？',o:['知识储备量','临床思维','活着就行','为什么要学医','为什么不学医'],sc:[5,4,3,2,1]},
+
+  /* ===== D 笃行 Do (7-13) ===== */
+  {dim:'D',dN:'笃行 Do',text:'实验报告ddl是明天，你现在？',o:['写完了','刚开始写','待会写','写什么','实什么报告'],sc:[5,4,3,2,1]},
+  {dim:'D',dN:'笃行 Do',text:'实验室里不小心打翻了一瓶试剂，你会？',o:['woc','手机呢','已读不回','已读乱回','认真打扫'],sc:[2,3,2,1,5]},
+  {dim:'D',dN:'笃行 Do',text:'游泳课蛙泳25米',o:['提前一个月每天去泳池练习','考前突击','看命','游泳池怎么这么脏','知道了'],sc:[5,4,3,2,1]},
+  {dim:'D',dN:'笃行 Do',text:'深夜发了一条矫情的朋友圈又秒删，结果被截图了，你会？',o:['社死现场，想找个地缝钻进去','无所谓，人生苦短，矫情一下怎么了','"被盗号了"','反手发一条更矫情的，把前面的盖过去','连夜修改隐私设置'],sc:[4,5,3,2,1]},
+  {dim:'D',dN:'笃行 Do',text:'早八',o:['人到心到','人到心不到','人不到心到❤️','人不到心不到','520快乐'],sc:[5,4,3,2,1]},
+  {dim:'D',dN:'笃行 Do',text:'室友很吵',o:['戴耳机','吼一嘴','打一拳','一起吵','。。。'],sc:[5,4,3,2,1]},
+  {dim:'D',dN:'笃行 Do',text:'患者男，21岁，因"被迫要完成SMUTI头痛一周"前来就诊',o:['设备科会诊','保卫处会诊','神外会诊','心理科会诊','自生自灭吧💔'],sc:[3,4,5,4,1]},
+
+  /* ===== S 尚德 Soul (14-21) ===== */
+  {dim:'S',dN:'尚德 Soul',text:'上一题患者头痛的根本原因是',o:['年少轻狂','被迫','SMUTI','头痛','一周'],sc:[3,5,4,2,1]},
+  {dim:'S',dN:'尚德 Soul',text:'宿舍里男生女生住同一层',o:['淡定','不淡定','好的','不好','找不到宿舍'],sc:[5,2,4,3,1]},
+  {dim:'S',dN:'尚德 Soul',text:'你对自己的书院（博雅/知行/尚进/德风）？',o:['美团','京东','叮咚买菜','山姆极速达','博学笃行尚德济世'],sc:[1,1,1,1,5]},
+  {dim:'S',dN:'尚德 Soul',text:'你的笔记',o:['别人看得懂','别人看不懂','我看得懂','我看不懂','没有笔记'],sc:[5,3,4,2,1]},
+  {dim:'S',dN:'尚德 Soul',text:'顺德校区周末想进城',o:['提前规划路线','偶尔去一次','已经三个月没出过校门了','算了一下车费，决定还是在校园里逛逛','每次进城都要发九宫格朋友圈记录'],sc:[5,4,2,3,1]},
+  {dim:'S',dN:'尚德 Soul',text:'你和隔壁宿舍（异性）的关系是？',o:['处成了兄弟/闺蜜，常串门','见面打个招呼，礼貌但不熟','住了两年都不知道隔壁是谁','隔壁成了你的闹钟，每天早上被他们的动静吵醒','歪比巴卜'],sc:[5,4,2,3,1]},
+  {dim:'S',dN:'尚德 Soul',text:'朋友圈看到同学发"学医后悔"的动态，你会？',o:['点赞并评论"+1"','私聊安慰一下，然后自己也想发一条','不理会，因为自己也在后悔中','截图保存，等自己也想发的时候参考措辞','不后悔学医'],sc:[5,4,3,2,1]},
+  {dim:'S',dN:'尚德 Soul',text:'医患关系话题上，你的立场是？',o:['医学是温暖的','做好本职，保护好自己','先活着再说吧','先过了这门课再说立场','太沉重了不想讨论'],sc:[5,4,3,2,1]},
+
+  /* ===== J 济世 Job (22-30) ===== */
+  {dim:'J',dN:'济世 Job',text:'你未来想成为？',o:['临床医生，救死扶伤','科研工作者，发论文申基金','能不能不选？我想躺平','复合型人才','吃完饭睡醒再说'],sc:[5,4,1,3,2]},
+  {dim:'J',dN:'济世 Job',text:'你是',o:['院士','院长','主任','副主任','小喽喽'],sc:[5,4,3,2,1]},
+  {dim:'J',dN:'济世 Job',text:'出成绩了',o:['自信','不敢睁开眼希望是我的幻觉','不查','事已至此饮杯茶先','打开教务，发现还没出'],sc:[5,3,2,4,1]},
+  {dim:'J',dN:'济世 Job',text:'科研进度',o:['9999999','1→999','999→1','1→1','0→0'],sc:[5,4,3,2,1]},
+  {dim:'J',dN:'济世 Job',text:'考试',o:['第一第一','老师菜菜捞捞','同学菜菜挂挂','不想考','嘻嘻嘻'],sc:[5,3,4,1,2]},
+  {dim:'J',dN:'济世 Job',text:'你选择学医的原因是？',o:['，悬壶济世','家人希望','分数刚好够','都怪SMU','说来话长……不想说了'],sc:[5,3,4,2,1]},
+  {dim:'J',dN:'济世 Job',text:'假如重新高考，你会？',o:['SMU','换个专业','快逃（）','选个不用天天考试的学校专业','先复读考上清华再说'],sc:[5,3,1,2,4]},
+  {dim:'J',dN:'济世 Job',text:'你对「尚德济世」的理解是？',o:['医者仁心，这是我们的使命','先把自己顾好，才有余力帮别人','好好考试别挂科就是最大的济世','在食堂帮同学带饭就是尚德','等我毕业了再说'],sc:[5,4,3,2,1]},
+  {dim:'J',dN:'济世 Job',text:'此题没有题目',o:['A','B','C','D','E'],sc:[3,3,3,3,3]}
+];
+
+var DIMS=[
+  {key:'B',label:'博学 Brain',color:'linear-gradient(90deg,#667eea,#764ba2)',start:0,end:6},
+  {key:'D',label:'笃行 Do',color:'linear-gradient(90deg,#f093fb,#f5576c)',start:7,end:13},
+  {key:'S',label:'尚德 Soul',color:'linear-gradient(90deg,#4facfe,#00f2fe)',start:14,end:21},
+  {key:'J',label:'济世 Job',color:'linear-gradient(90deg,#43e97b,#38f9d7)',start:22,end:30}
+];
+
+/* ===== 人格库：key 由 dimCode(B)+dimCode(D)+dimCode(S)+dimCode(J) 生成 ===== */
+/* ===== 大写=该维度>50%  小写=该维度<=50%  共16种核心人格+3种隐藏人格 ===== */
+/* ===== 评分哲学：每题5选项对应1-5分，分值=该选项在所属维度上的"典型度" ===== */
+/* ===== B博学：知识储备与学习态度  D笃行：行动力与执行力 ===== */
+/* ===== S尚德：品德修养与人际共情  J济世：职业理想与使命担当 ===== */
+var P={
+'BDSJ':{t:'SMU六边形战士',e:'⚔️',d:'德智体美劳全面发展，你就是老师口中"别人家的孩子"。成绩好、能力强、人品佳、目标清。同学怀疑你是NPC，但你只是比别人多了一点自律和热爱。',g:'完美觉醒系'},
+'BDSj':{t:'佛系学霸',e:'🧘',d:'成绩好能力强心肠软，唯一的问题是没有目标。别人问你以后干嘛，你说"活着就行"。你的人生就像一篇没有结论的论文，精彩但不知道要表达什么。',g:'象牙塔系'},
+'BDsJ':{t:'临床怪才',e:'🔬',d:'你的知识储备和执行力都在线，还有明确的职业目标。唯一的短板是社交。你在实验室跟细胞对话比跟人聊天顺畅得多。患者觉得你冷冰冰，但你的手术刀是热的。',g:'学术科研系'},
+'BDsj':{t:'孤独的学霸',e:'📖',d:'你聪明能干但没有社交也没有目标。你是那种考试满分但不知道为什么学医的人。同学觉得你高冷，其实你只是在思考下一道题。',g:'象牙塔系'},
+'BdSJ':{t:'思想的巨人',e:'🗿',d:'你读了很多书、心怀理想、也想拯救世界，但每次要动手的时候就开始"待会再说"。你的收藏夹里有100篇干货，但你一篇都没看完。',g:'灵魂摆烂系'},
+'BdSj':{t:'知识废柴',e:'🛋️',d:'你什么都懂、什么都看得透，但就是不想动。你是那种把教科书买齐然后当枕头的人。你的知识储备很丰富，但你的床更丰富。',g:'象牙塔系'},
+'BdsJ':{t:'科研机器',e:'🧪',d:'你的世界只有文献和实验。社交是什么？能发论文吗？你的理想是在实验室待到天荒地老，最后以一篇CNS作为人生的句号。',g:'学术科研系'},
+'Bdsj':{t:'书呆子本呆',e:'🤓',d:'你的人生只有学习。你的知识储备堪比百科全书，但生活能力为零。你是那种考试满分但不会用洗衣机的奇才。',g:'象牙塔系'},
+'bDSJ':{t:'实战王者',e:'⚡',d:'虽然课本知识不太行，但你动手能力满分、人缘好、还有远大理想。你就是那种没复习但考得比谁都好的人，老师都怀疑你是不是提前看了卷子。',g:'临床实战系'},
+'bDSj':{t:'校园社交天花板',e:'🌟',d:'你成绩一般但人缘超好、办事靠谱。在顺德校区你就像一条鱼，哪里都能游。你认识的人比你读过的书还多，食堂阿姨都记得你的口味。',g:'顺德漂流系'},
+'bDsJ':{t:'行动派卷王',e:'🏃',d:'你不太爱学习但特别能干，还有远大理想。你是那种不读书但天天泡图书馆的人，虽然不知道在干嘛但至少在动。你的行动力是你的超能力。',g:'临床实战系'},
+'bDsj':{t:'干就完了',e:'💪',d:'你不太聪明不太善良不太有理想，但你特别能干。你是那种"先做了再说"的人，虽然经常做错但至少你在做。行动是你的信仰。',g:'校园生存系'},
+'bdSJ':{t:'善良空想家',e:'🕊️',d:'你心地善良有远大理想，但你既不学习也不行动。你是那种会在朋友圈转发水滴筹但自己从不努力的人。你的善良是真的，你的摆烂也是。',g:'灵魂摆烂系'},
+'bdSj':{t:'天使宝宝',e:'😇',d:'你人很好但其他方面都不太行。你是那种考试挂科但室友都愿意帮你的类型。你的善良是你唯一的超能力，但在这个测试里够用了。',g:'灵魂摆烂系'},
+'bdsJ':{t:'目标型选手',e:'🎯',d:'你啥都不太行但你有目标有方向。你是那种成绩不好但知道自己要什么的人。别人笑你太疯癫，你笑别人看不穿。未来可期。',g:'精神状态系'},
+'bdsj':{t:'佛系医学生',e:'☁️',d:'你啥都不太行但你心态好。你的人生信条是：只要我不努力，压力就追不上我。你不是没有梦想，你是把梦想调成了静音模式。',g:'灵魂摆烂系'}
+};
+
+var cur=0,answers=[],dimScores={B:0,D:0,S:0,J:0};
+
+function showPage(id){
+  ['page-index','page-quiz','page-result'].forEach(function(p){document.getElementById(p).classList.add('hidden')});
+  document.getElementById(id).classList.remove('hidden');
+  window.scrollTo(0,0);
+}
+function startQuiz(){cur=0;answers=[];dimScores={B:0,D:0,S:0,J:0};showPage('page-quiz');renderDimDots();renderQuestion()}
+function retake(){startQuiz()}
+
+function renderDimDots(){
+  var c=document.getElementById('dim-dots');
+  c.innerHTML=DIMS.map(function(d,i){return '<div class="dim-dot'+(i===0?' active':'')+'" id="dd-'+i+'"><span>'+d.label+'</span></div>'}).join('');
+}
+function renderQuestion(){
+  var q=Q[cur],pct=cur/Q.length*100;
+  document.getElementById('prog-label').textContent='第 '+(cur+1)+' / '+Q.length+' 题';
+  document.getElementById('prog-dim').textContent=q.dN;
+  document.getElementById('prog-fill').style.width=pct+'%';
+  document.getElementById('q-tag-text').textContent=q.dN;
+  document.getElementById('q-text').textContent=q.text;
+  var di=DIMS.findIndex(function(d){return d.key===q.dim});
+  DIMS.forEach(function(_,i){document.getElementById('dd-'+i).classList.toggle('active',i<=di)});
+  var letters='ABCDE';
+  var ow=document.getElementById('options-wrap');
+  ow.innerHTML=q.o.map(function(o,i){
+    return '<div class="option" onclick="selectOpt('+i+')" id="opt-'+i+'"><div class="option-idx">'+letters[i]+'</div><div class="option-text">'+o+'</div><div class="option-check">✓</div></div>';
+  }).join('');
+  document.getElementById('next-area').classList.add('hidden');
+  var card=document.getElementById('q-card');
+  card.style.animation='none';card.offsetHeight;card.style.animation='fadeIn .4s ease';
+}
+
+function selectOpt(idx){
+  var opts=document.querySelectorAll('.option');
+  opts.forEach(function(o){o.classList.remove('selected')});
+  document.getElementById('opt-'+idx).classList.add('selected');
+  var q=Q[cur];
+  /* 扣除旧分（如果改选），加新分 */
+  if(answers.length>cur && answers[cur]!==null){
+    var oldIdx='ABCDE'.indexOf(answers[cur]);
+    dimScores[q.dim]-=q.sc[oldIdx];
+  }
+  if(answers.length<=cur) answers.push('ABCDE'[idx]);
+  else answers[cur]='ABCDE'[idx];
+  dimScores[q.dim]+=q.sc[idx];
+  document.getElementById('next-area').classList.remove('hidden');
+  document.getElementById('next-btn').textContent=cur<Q.length-1?'下一题 →':'查看结果 🎭';
+}
+function nextQuestion(){cur++;if(cur>=Q.length){showResult();return}renderQuestion();window.scrollTo({top:0,behavior:'smooth'})}
+
+/* 计算维度得分百分比 */
+function getDimPct(key){
+  var dim=DIMS.find(function(d){return d.key===key});
+  var maxScore=(dim.end-dim.start+1)*5;
+  return Math.round(dimScores[key]/maxScore*100);
+}
+/* 得分百分比>50% → 大写，否则小写 */
+function dimCode(key){return getDimPct(key)>50?key:key.toLowerCase()}
+
+function showResult(){
+  var code=dimCode('B')+dimCode('D')+dimCode('S')+dimCode('J');
+  var aCount=answers.filter(function(a,i){return a==='A'}).length;
+  var totalNonA=answers.filter(function(a){return a!=='A'}).length;
+  var result=null;
+
+  /* 隐藏人格 */
+  var ansC=answers.filter(function(a){return a==='C'}).length;
+  var ansE=answers.filter(function(a){return a==='E'}).length;
+  var ansLow=ansC+answers.filter(function(a){return a==='D'}).length+ansE;
+  if(ansLow>=8&&answers[30]==='C') result={t:'南医传说',e:'🌟',d:'30题里有8题以上选了C/D/E，最后一题还盲选了C。你不是在答题，你是在渡劫。传说级医学生，不可复制。',g:'隐藏人格'};
+  else if(aCount>=24) result={t:'白大褂战神',e:'⚔️',d:'24题全选A，你就是行走的SMU招生简章。老师看了想招你当助教，同学看了想举报你太卷。',g:'隐藏人格'};
+  else if(answers[12]==='C'&&answers[6]==='C') result={t:'顺德美食地图',e:'🗺️',d:'第7题和第13题都选了C，比起医学你更懂顺德。你的知识储备不在课本里，在大众点评的收藏夹里。',g:'隐藏人格'};
+
+  if(!result){
+    result=P[code];
+    if(!result){
+      var keys=Object.keys(P);
+      var match=keys.find(function(k){return k.toLowerCase()===code.toLowerCase()});
+      result=match?P[match]:{t:'SMU神秘人',e:'🌀',d:'你的灵魂太过复杂，现有的人格标签无法定义你。你是南医大的未解之谜。',g:'未知领域'};
+    }
+  }
+
+  showPage('page-result');
+  document.getElementById('r-emoji').textContent=result.e;
+  document.getElementById('r-type').textContent=result.g;
+  document.getElementById('r-title').textContent=result.t;
+  document.getElementById('r-desc').textContent=result.d;
+
+  var dc=document.getElementById('dims-container');
+  dc.innerHTML=DIMS.map(function(dm){
+    var pct=getDimPct(dm.key);
+    var val='均衡';if(pct>=70)val='拉满';else if(pct>=50)val='偏强';else if(pct<=30)val='佛系';
+    return '<div class="dim-row"><div class="dim-lbl">'+dm.label+'</div><div class="dim-track"><div class="dim-fill" style="width:'+pct+'%;background:'+dm.color+'"></div></div><div class="dim-val">'+val+'</div></div>';
+  }).join('');
+
+  document.getElementById('share-text').textContent='我的SMUTI人格是【'+result.e+' '+result.t+'】'+result.d+'\n\n#SMUTI #南方医科大学 #SillyMedicalUniversityTest';
+
+  var pp=document.getElementById('particles');pp.innerHTML='';
+  var colors=['rgba(102,126,234,.2)','rgba(118,75,162,.2)','rgba(240,147,251,.2)','rgba(67,233,123,.2)'];
+  for(var i=0;i<15;i++){
+    var p=document.createElement('div');p.className='particle';
+    p.style.left=Math.random()*100+'%';p.style.width=p.style.height=(4+Math.random()*8)+'px';
+    p.style.background=colors[i%colors.length];p.style.animationDuration=(3+Math.random()*5)+'s';p.style.animationDelay=(Math.random()*3)+'s';
+    pp.appendChild(p);
+  }
+}
+function copyShare(){
+  var text=document.getElementById('share-text').textContent;
+  if(navigator.clipboard){navigator.clipboard.writeText(text).then(function(){showCopyHint()})}
+  else{var ta=document.createElement('textarea');ta.value=text;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);showCopyHint()}
+}
+function showCopyHint(){var h=document.getElementById('copy-hint');h.classList.add('show');setTimeout(function(){h.classList.remove('show')},2000)}
+</script>
+</body>
+</html>

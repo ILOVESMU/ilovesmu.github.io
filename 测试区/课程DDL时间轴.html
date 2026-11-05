@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>课程 DDL 时间轴 · 23预防食品班</title>
+<style>
+  :root{
+    --bg:#F4F6F9;
+    --panel:#FFFFFF;
+    --line:#E3E8EF;
+    --ink:#1B2430;
+    --ink-2:#5A6675;
+    --ink-3:#8A94A3;
+    --colw:100px;
+    --red:#E23D30;
+    --today:#FFF7E0;
+    --shadow:0 1px 2px rgba(16,24,40,.06),0 8px 24px rgba(16,24,40,.06);
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;color:var(--ink);
+    background:
+      radial-gradient(1200px 520px at 50% -16%, #EAF4FF 0%, rgba(234,244,255,0) 62%),
+      #FAFCFE;
+    background-attachment:fixed;
+    font-family:"Microsoft YaHei","PingFang SC","Hiragino Sans GB",system-ui,-apple-system,"Segoe UI",sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  /* ---------- 顶栏 ---------- */
+  .topbar{
+    position:sticky;top:0;z-index:40;
+    display:flex;align-items:center;gap:20px;flex-wrap:wrap;
+    padding:20px 40px;background:rgba(255,255,255,.92);
+    border-bottom:1px solid var(--line);backdrop-filter:blur(8px);
+  }
+  .brand h1{margin:0;font-size:19px;letter-spacing:.3px}
+  .brand p{margin:4px 0 0;font-size:12.5px;color:var(--ink-3)}
+  .tabs{display:flex;gap:6px;margin-left:auto;background:#EEF1F5;padding:4px;border-radius:11px}
+  .tab{
+    border:0;background:transparent;color:var(--ink-2);font:inherit;font-size:13px;
+    padding:8px 16px;border-radius:8px;cursor:pointer;transition:.16s;
+  }
+  .tab:hover{color:var(--ink)}
+  .tab.active{background:#fff;color:var(--ink);font-weight:600;box-shadow:0 1px 3px rgba(16,24,40,.12)}
+  main{padding:28px 40px 48px}
+
+  /* ---------- 视图一：全部 ---------- */
+  .stage{
+    background:var(--panel);border:1px solid var(--line);border-radius:16px;
+    box-shadow:var(--shadow);overflow:hidden;
+  }
+  .scroller{
+    overflow-x:auto;overflow-y:hidden;   /* 高度随内容撑开，纵向由页面自然滚动 */
+    scrollbar-width:none;-ms-overflow-style:none;
+  }
+  .scroller::-webkit-scrollbar{display:none}
+  .grid{display:inline-flex;flex-direction:column;min-width:100%}
+
+  .band{display:flex;position:sticky;top:0;z-index:5;background:#fff}
+  .band .seg{
+    flex:0 0 auto;height:40px;display:flex;align-items:center;justify-content:center;gap:8px;
+    font-size:12px;color:var(--ink-3);letter-spacing:.4px;
+    border-right:1px solid var(--line);border-bottom:1px solid var(--line);
+    background:linear-gradient(180deg,#FBFCFE,#F5F7FA);
+  }
+  .band .seg.odd{background:linear-gradient(180deg,#F6F8FB,#EEF2F7)}
+  .band .seg b{color:var(--ink-2);font-weight:600;font-size:12px}
+
+  .days{display:flex;align-items:stretch}
+  .day{
+    flex:0 0 var(--colw);width:var(--colw);
+    border-right:1px solid var(--line);
+    padding:0 0 16px;background:#fff;position:relative;
+  }
+  .day.today{background:var(--today)}
+  .day-h{
+    position:sticky;top:40px;z-index:4;background:inherit;
+    padding:9px 8px 8px;border-bottom:1px solid var(--line);
+  }
+  .day.today .day-h{padding-bottom:7px}
+  .dh-top{display:flex;align-items:baseline;gap:6px}
+  .dh-date{font-size:14px;font-weight:700;letter-spacing:-.2px}
+  .dh-wd{font-size:10.5px;color:var(--ink-3)}
+  .dh-week{font-size:9.5px;color:var(--ink-3);margin-left:auto}
+  .today-pill{
+    display:inline-block;margin-top:7px;font-size:11px;color:#8A5A00;
+    background:#FFE8A8;border-radius:5px;padding:1px 6px;font-weight:600;
+  }
+  .col-body{padding:7px 6px 0}
+
+  /* ---------- 卡片 ---------- */
+  .card{
+    position:relative;border-radius:12px;padding:11px 7px 9px 11px;margin-bottom:9px;
+    min-height:136px;display:flex;flex-direction:column;
+    cursor:pointer;overflow:hidden;transition:transform .14s, box-shadow .14s, opacity .2s;
+    border:1px solid rgba(0,0,0,.05);
+  }
+  .card::before{
+    content:"";position:absolute;left:0;top:0;bottom:0;width:4px;
+    background:rgba(0,0,0,.10);
+  }
+  .card:hover{transform:translateY(-3px);box-shadow:0 12px 24px -6px var(--glow,rgba(16,24,40,.28))}
+  .card.past{opacity:.46;filter:grayscale(.35)}
+  .card.past:hover{opacity:.85}
+  .c-chip{
+    display:block;width:fit-content;max-width:100%;font-size:10px;font-weight:800;letter-spacing:0;
+    background:rgba(255,255,255,.62);color:inherit;border-radius:5px;padding:3px 5px;margin-bottom:7px;
+    line-height:1.25;word-break:break-all;vertical-align:middle;
+  }
+  .c-title{font-size:13px;font-weight:700;line-height:1.45;margin-bottom:6px;color:inherit;word-break:break-word}
+  .c-time{font-size:10.5px;font-weight:700;opacity:.8;line-height:1.35;color:inherit;margin-top:auto}
+  .c-kind{
+    position:absolute;right:8px;bottom:9px;font-size:10px;font-weight:800;
+    background:rgba(255,255,255,.22);border-radius:4px;padding:1px 5px;color:#fff;opacity:.95;
+  }
+  /* 新增 DDL 的“新”角标（占右上角，与类型徽标互斥） */
+  .c-new{
+    position:absolute;right:5px;top:5px;z-index:3;
+    font-size:10px;font-weight:800;letter-spacing:.3px;line-height:1.3;
+    color:#C22A2E;background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:6px;padding:2px 9px;
+    box-shadow:0 2px 6px rgba(0,0,0,.12);
+  }
+  .card.is-new{border-color:rgba(255,255,255,.55);box-shadow:0 3px 10px rgba(0,0,0,.2)}
+  .card.is-new:hover{box-shadow:0 9px 20px rgba(0,0,0,.3),0 0 0 1.5px rgba(255,255,255,.5)}
+  .m-new{
+    display:inline-block;font-size:11px;font-weight:800;color:#fff;background:#E5484D;
+    border-radius:5px;padding:1px 7px;margin-right:8px;vertical-align:2px;letter-spacing:.5px;
+  }
+
+  /* ---------- 自定义拖动条 ---------- */
+  .dragwrap{
+    display:flex;align-items:center;gap:14px;padding:14px 18px 16px;
+    border-top:1px solid var(--line);background:linear-gradient(180deg,#FBFCFE,#F2F5F9);
+  }
+  .dragbar{
+    position:relative;flex:1;height:54px;border-radius:14px;cursor:pointer;
+    background:
+      repeating-linear-gradient(90deg,#E6EBF2 0 2px,transparent 2px 12px),
+      #EDF1F6;
+    border:1px solid #DDE4ED;overflow:hidden;
+  }
+  .thumb{
+    position:absolute;top:3px;bottom:3px;left:0;min-width:132px;
+    display:flex;align-items:center;justify-content:center;gap:8px;
+    border-radius:9px;cursor:grab;user-select:none;
+    background:linear-gradient(180deg,#4C7EF3,#3A66D6);
+    color:#fff;font-size:12px;font-weight:600;letter-spacing:.4px;
+    box-shadow:0 3px 10px rgba(58,102,214,.35), inset 0 1px 0 rgba(255,255,255,.28);
+    transition:background .15s;
+  }
+  .thumb:active{cursor:grabbing;background:linear-gradient(180deg,#3F6FE0,#2F55BE)}
+  .thumb .grip{
+    width:3px;height:16px;border-radius:2px;background:rgba(255,255,255,.55);
+    box-shadow:5px 0 0 rgba(255,255,255,.55);margin-right:5px;
+  }
+  .drag-note{font-size:12.5px;color:var(--ink-3);white-space:nowrap}
+  @media (max-width:560px){ .drag-note{display:none} }
+
+  /* 右缘渐隐提示 */
+  .stage{position:relative}
+  .fade-r{
+    position:absolute;right:0;top:0;bottom:58px;width:54px;pointer-events:none;
+    background:linear-gradient(90deg,rgba(255,255,255,0),rgba(255,255,255,.95));
+    opacity:1;transition:opacity .2s;
+  }
+  .fade-r.off{opacity:0}
+
+  /* ---------- 视图二：按周 ---------- */
+  .wk-bar{
+    display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+    background:#fff;border:1px solid var(--line);border-radius:14px 14px 0 0;
+    padding:14px 18px;border-bottom:0;
+  }
+  .btn{
+    border:1px solid var(--line);background:#fff;color:var(--ink);
+    font:inherit;font-size:13px;font-weight:600;padding:8px 13px;border-radius:9px;
+    cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:.14s;
+  }
+  .btn:hover{background:#F4F7FB;border-color:#CFD8E4}
+  .btn:disabled{opacity:.4;cursor:not-allowed}
+  .wk-title{font-size:16.5px;font-weight:700;letter-spacing:.2px}
+  .wk-title span{font-weight:400;color:var(--ink-3);font-size:12.5px;margin-left:8px}
+  .wk-bar .spacer{flex:1}
+  .menu-wrap{position:relative}
+  .menu-btn{background:#EEF2F8;border-color:#DCE3ED}
+  .pop{
+    position:absolute;right:0;top:calc(100% + 8px);z-index:60;width:268px;
+    background:#fff;border:1px solid var(--line);border-radius:13px;
+    box-shadow:0 18px 48px rgba(16,24,40,.18);padding:8px;display:none;
+  }
+  .pop.open{display:block}
+  .pop h4{margin:4px 6px 8px;font-size:11px;color:var(--ink-3);font-weight:600;letter-spacing:.4px}
+  .pop-list{
+    max-height:290px;overflow-y:auto;scrollbar-width:thin;
+    cursor:grab;-webkit-overflow-scrolling:touch;
+  }
+  .pop-list:active{cursor:grabbing}
+  .pop-list::-webkit-scrollbar{width:8px}
+  .pop-list::-webkit-scrollbar-thumb{background:#D6DEE9;border-radius:8px}
+  .wk-item{
+    display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:9px;
+    cursor:pointer;font-size:13px;
+  }
+  .wk-item:hover{background:#F3F6FB}
+  .wk-item.sel{background:#EAF1FE;color:#1B4FBF;font-weight:600}
+  .wk-item .n{width:54px;font-weight:600;white-space:nowrap}
+  .wk-item .rng{color:var(--ink-3);font-size:11.5px}
+  .wk-item .dot{
+    margin-left:auto;min-width:18px;height:18px;border-radius:9px;background:#E6ECF5;
+    font-size:10.5px;font-weight:700;color:var(--ink-2);display:flex;align-items:center;justify-content:center;padding:0 5px;
+  }
+  .wk-item .dot.has{background:#4C7EF3;color:#fff}
+
+  .week-grid{
+    display:grid;grid-template-columns:repeat(7,minmax(0,1fr));
+    background:#fff;border:1px solid var(--line);border-top:0;
+    border-radius:0 0 16px 16px;overflow:hidden;box-shadow:var(--shadow);
+  }
+  .wcol{
+    border-right:1px solid var(--line);min-height:520px;display:flex;flex-direction:column;
+  }
+  .wcol:last-child{border-right:0}
+  .wcol.today{background:var(--today)}
+  .wcol-h{padding:10px 9px;border-bottom:1px solid var(--line);background:inherit}
+  .wcol.today .wcol-h{box-shadow:inset 0 -2px 0 #F2C14E}
+  .wh-wd{font-size:11px;color:var(--ink-3)}
+  .wh-date{font-size:15px;font-weight:700;margin-top:2px;letter-spacing:-.2px}
+  .wcol-b{padding:7px 6px 14px;flex:1}
+  .empty{padding:16px 12px;font-size:11.5px;color:#B4BCC8;text-align:center;line-height:1.6}
+  .wcol .card{margin-bottom:14px}
+  .wcol .card .c-title{font-size:13px}
+  @media (max-width:900px){
+    .week-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .wcol{min-height:auto}
+  }
+  /* ---------- 手机端：去掉左右留白，铺满屏宽 ---------- */
+  @media (max-width:640px){
+    :root{--colw:88px}
+    .c-title{font-size:12px}
+    .c-chip{font-size:9.5px;padding:2px 4px}
+    .dh-date{font-size:13px}
+    .topbar{padding:13px 12px;gap:10px}
+    main{padding:14px 0 28px}
+    .stage{border-radius:0;border-left:0;border-right:0;box-shadow:0 1px 2px rgba(16,24,40,.06)}
+    .stage .dragwrap{padding:12px 10px 14px}
+    .hint-tip{margin:12px 10px 0}
+    .wk-bar{padding:12px 12px;border-left:0;border-right:0;border-radius:0;gap:8px}
+    .week-grid{border-left:0;border-right:0;border-radius:0}
+    .wcol-h{padding:11px 9px}
+    .wh-date{font-size:16px}
+    .wcol-b{padding:10px 8px 16px}
+    .modal{padding:10px}
+    .sheet-h{padding:16px 16px 12px}
+    .sheet-b{padding:6px 16px 18px}
+  }
+
+  /* ---------- 详情弹层 ---------- */
+  .modal{
+    position:fixed;inset:0;z-index:100;display:none;align-items:center;justify-content:center;
+    background:rgba(17,24,39,.42);padding:20px;
+  }
+  .modal.open{display:flex}
+  .sheet{
+    width:min(620px,100%);max-height:82vh;overflow:auto;background:#fff;border-radius:18px;
+    box-shadow:0 30px 80px rgba(16,24,40,.3);animation:pop .16s ease-out;
+  }
+  @keyframes pop{from{transform:translateY(8px) scale(.99);opacity:0}to{transform:none;opacity:1}}
+  .sheet-h{padding:20px 22px 14px;border-bottom:1px solid var(--line);position:relative}
+  .sheet-h .tag{display:inline-block;font-size:11px;font-weight:700;padding:3px 9px;border-radius:6px;margin-bottom:9px}
+  .sheet-h h3{margin:0;font-size:18px;line-height:1.4;padding-right:30px}
+  .sheet-h .sub{margin:7px 0 0;font-size:12.5px;color:var(--ink-3)}
+  .x{
+    position:absolute;right:14px;top:14px;width:30px;height:30px;border:0;border-radius:8px;
+    background:#F2F5F9;color:var(--ink-2);font-size:16px;cursor:pointer;line-height:1;
+  }
+  .x:hover{background:#E7ECF3}
+  .sheet-b{padding:6px 22px 22px}
+  .row{padding:13px 0;border-bottom:1px dashed #EBEFF5}
+  .row:last-child{border-bottom:0}
+  .row .k{font-size:11px;font-weight:700;color:var(--ink-3);letter-spacing:.5px;margin-bottom:6px}
+  .row .v{font-size:13.5px;line-height:1.78;color:#28313D;white-space:pre-wrap;word-break:break-word}
+  .hint-tip{
+    display:flex;align-items:center;gap:8px;margin:14px 4px 0;font-size:12.5px;color:var(--ink-3);
+  }
+  .kbd{
+    border:1px solid #DCE3ED;border-bottom-width:2px;border-radius:5px;padding:1px 6px;
+    background:#fff;font-size:10.5px;color:var(--ink-2);
+  }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <h1>课程 DDL 时间轴</h1>
+    <p>23预防食品班 · 共 <b id="cnt">16</b> 项 · 数据整理于 2026-11-02</p>
+  </div>
+  <div class="tabs">
+    <button class="tab active" data-mode="all">全部 DDL</button>
+    <button class="tab" data-mode="week">按周查看</button>
+  </div>
+</header>
+
+<main>
+  <!-- ============ 视图一：全部 ============ -->
+  <section id="view-all">
+    <div class="stage">
+      <div class="scroller" id="scroller">
+        <div class="grid">
+          <div class="band" id="band"></div>
+          <div class="days" id="days"></div>
+        </div>
+      </div>
+      <div class="fade-r" id="fadeR"></div>
+      <div class="dragwrap">
+        <div class="dragbar" id="dragbar">
+          <div class="thumb" id="thumb"><span class="grip"></span><span>左右拖动查看</span></div>
+        </div>
+        <div class="drag-note">共 <b id="weeks-n">6</b> 周 · 拖动蓝色滑块左右查看</div>
+      </div>
+    </div>
+    <div class="hint-tip">
+      <span class="kbd">提示</span> 点击任意色块可查看该作业的完整要求、提交方式与备注。
+    </div>
+  </section>
+
+  <!-- ============ 视图二：按周 ============ -->
+  <section id="view-week" hidden>
+    <div class="wk-bar">
+      <button class="btn" id="prevWk">← 上一周</button>
+      <div class="wk-title" id="wkTitle">第 10 周 <span>11/2 – 11/8</span></div>
+      <button class="btn" id="nextWk">下一周 →</button>
+      <div class="spacer"></div>
+      <button class="btn" id="todayBtn">回到本周</button>
+      <div class="menu-wrap">
+        <button class="btn menu-btn" id="menuBtn">选择周 ▾</button>
+        <div class="pop" id="pop">
+          <h4>拖动列表可快速跳转</h4>
+          <div class="pop-list" id="popList"></div>
+        </div>
+      </div>
+    </div>
+    <div class="week-grid" id="weekGrid"></div>
+  </section>
+</main>
+
+<!-- 详情弹层 -->
+<div class="modal" id="modal">
+  <div class="sheet" id="sheet">
+    <div class="sheet-h">
+      <span class="tag" id="mTag">课程</span>
+      <button class="x" id="mClose">✕</button>
+      <h3 id="mTitle">任务</h3>
+      <p class="sub" id="mSub"></p>
+    </div>
+    <div class="sheet-b" id="mBody"></div>
+  </div>
+</div>
+
+<script>
+/* ====== 数据 ====== */
+/* bg = 左端（较饱和），top = 右端（浅色），渐变从左到右：深 → 浅；fg = 深色文字 */
+const COURSES = {
+  "食品理化检验":      { top:"#CFE4FB", bg:"#79AEE9", fg:"#0D3568", glow:"rgba(80,140,210,.32)" },
+  "环境卫生学":        { top:"#CDEEE4", bg:"#63C2AB", fg:"#0A4638", glow:"rgba(60,170,145,.32)" },
+  "职业卫生与职业医学":{ top:"#FCDDE8", bg:"#F092B2", fg:"#8A1E42", glow:"rgba(230,110,150,.32)" },
+  "流行病学":          { top:"#E4D6F9", bg:"#B394E8", fg:"#4A2076", glow:"rgba(150,110,215,.32)" },
+  "营养与食品卫生学":  { top:"#D7F1DE", bg:"#83CC96", fg:"#14532D", glow:"rgba(90,180,120,.32)" },
+  "形势与政策":        { top:"#E2E8EF", bg:"#ACB8C6", fg:"#333F4D", glow:"rgba(140,155,175,.28)" }
+};
+
+const EVENTS = [
+  { c:"营养与食品卫生学", t:"食物的营养价值课后测验", d:"2026-11-02", time:"07:59 截止", kind:"测验",
+    detail:"课程平台「食物的营养价值课后测验」，计入期末总成绩。\n规则：每位同学限 2 次答题机会，每次限时 20 分钟，取最高成绩记录；答题开放时间为一周，即 10 月 26 日 8:00 至 11 月 2 日 7:59。\n系统关闭后将不再开放，务必在限定时间内完成。楚老师布置。",
+    submit:"课程平台在线答题（限 2 次，取最高分）", note:"计入期末总成绩；最紧急" },
+
+  { c:"职业卫生与职业医学", t:"PBL 案例分析（一）", d:"2026-11-02", time:"课堂", kind:"课堂",
+    detail:"开展 PBL 案例分析课，第一次为「PBL 案例分析（一）」。\n教务系统已完成分组，需查看课表核对本人所在分组。",
+    submit:"课堂参与，按教务系统分组", note:"需先核对分组" },
+
+  { c:"职业卫生与职业医学", t:"实验报告", d:"2026-11-03", time:"17:00 截止", kind:"作业",
+    detail:"提交课程实验报告。",
+    submit:"高层 1779 门口 或 平时课上当面提交", note:"纸质；截止较早" },
+
+  { c:"环境卫生学", t:"小组汇报（讨论课·综合理论 1）", d:"2026-11-05", time:"09:50–12:00", kind:"汇报",
+    detail:"第 03–05 节，604 教室，蒋云霞老师。\n① 按之前「大气卫生」汇报的分组进行，每组认领 1 个主题（组内不重复），也可自拟，但须与《环境卫生学》课程内容相关；参考选题见爱课平台（著名水利工程、土壤污染与重金属、中国民居建筑文化与住宅风水、人类未来住宅、公共空间与公厕卫生管理及《公共场所卫生管理条例》《传染病防治法》等）。\n② 群通知要求每组汇报 25 分钟左右（文档里写「8 分钟 PPT」，以群通知为准）；PPT 不要直接摘抄网络、课件与课本。\n③ 按分组组序汇报；序号靠后的小组若想在第 10 周这节汇报，需提前告知课代表。",
+    submit:"课堂汇报（约 25 分钟 / 组）", note:"第一次即 11/5，注意自己组的组序" },
+
+  { c:"食品理化检验", t:"期末考试", d:"2026-11-06", time:"全天", kind:"考试",
+    detail:"《食品理化检验》课程考试。\n具体考场、考试形式与时长以教务系统 / 老师通知为准（群里暂未发考场信息）。",
+    submit:"现场考试", note:"需提前复习；考场待确认" },
+
+  { c:"食品理化检验", t:"第一次作业：形成性评价", d:"2026-11-07", time:"23:59 截止", kind:"作业",
+    detail:"具体要求见群文件《食品理化检验形成性评价作业.pptx》（41.74KB，09/03 12:38 发布）。\n本次作业成绩占最终考核成绩的 10%，务必认真完成。",
+    submit:"电子版发至 2691133964@qq.com\n命名：年级-姓名-学号", note:"邮件里注明是第几次作业" },
+
+  { c:"食品理化检验", t:"实验六实验报告", d:"2026-11-08", time:"23:00 截止", kind:"作业",
+    detail:"按群文件《实验六白酒中甲醇含量测定2025.pptx》（121.27KB）完成「白酒中甲醇含量测定」实验报告。",
+    submit:"交到 20 栋楼下帆布袋 或 平时课上提交", note:"纸质" },
+
+  { c:"食品理化检验", t:"第二次平时作业", d:"2026-11-09", time:"23:59 截止", kind:"作业",
+    detail:"以任何一种具体的食物（大米、面粉、纯牛奶、猪肉、鸡肉、生菜、胡萝卜、生鸡蛋、白酒、酱油等）为例，阐述其食品理化检验内容和方法。\n要求：\n1. 理化检验内容尽可能全面：包括感官指标、蛋白质和脂肪等营养素含量的检测、常见污染物的种类及其检测方法、可能非法添加的非食用物质种类及其检测方法。\n2. 不要出现雷同的作业，否则两份作业均为零分。\n3. 作业以电子版形式提交（PPT 原图写「11 月 10 日前发给课代表，课代表汇总后统一发给 suxiaosun@hotmail.com」，群通知改为直接发邮箱、时间更早，以群通知为准）。",
+    submit:"电子版发至 2691133964@qq.com\n命名：学号+姓名", note:"共两次平时作业，注明「第二次」" },
+
+  { c:"环境卫生学", t:"实验报告（第三次实验课后）", d:"2026-11-09", time:"课后提交", kind:"作业",
+    detail:"《环境卫生学》实验报告：在第三次实验课之后提交（含漂白粉实验等内容，实验指导见群文件《漂白粉实验2026(1).ppt》）。\n第三次实验课时间为 11 月 9 日，即实验报告在 11 月 9 日课后提交；具体提交形式（纸质 / 线上）以老师或课代表通知为准。",
+    submit:"课堂 / 课后提交，形式待通知", note:"第三次实验课 = 11 月 9 日" },
+
+  { c:"环境卫生学", t:"虚拟仿真实验（水环境）", d:"2026-11-10", time:"截止", kind:"实验",
+    detail:"学校虚拟仿真实验平台「水环境实验」，需用本人账号登录完成（https://xnfz.smu.edu.cn/login）。\n① 后台自动记录成绩；操作完成后会出现「得分统计」页面，务必截图留存（10/10 再次强调必须截图）。\n② 提交后系统自动记录；若记录异常，把成绩截图发给课代表，由其报老师手动修改。\n③ 本实验无需提交实验报告。",
+    submit:"平台在线完成 + 成绩页面截图留存", note:"截图留底，防成绩异常" },
+
+  { c:"流行病学", t:"文献汇报（小组·课堂）", d:"2026-11-18", time:"课堂", kind:"汇报",
+    detail:"① 84 位同学分成 10 组（6 个 8 人组、4 个 9 人组），每组负责一篇文献；组号 1 对应第一篇文献，以此类推。\n② 自行组队，选出组长并分工，将分工名单发给课代表。\n③ 汇报结束后每位同学需组内互评，并把互评分发给课代表。\n④ 分组在同一份腾讯文档《流行病学文献汇报分组》中填写（所有人可编辑）。",
+    submit:"课堂汇报；分工名单 + 互评分发课代表", note:"需提前组队、填分组表" },
+
+  { c:"营养与食品卫生学", t:"江南饮食论述题", d:"2026-11-19", time:"23:59 截止", kind:"作业", isNew:true,
+    detail:"论述题，500 字，电子版提交（电子版发邮件即可）。\n题目：\n1. 什么是江南饮食？\n2. 江南饮食和地中海饮食相比有什么优劣？\n3. 日常生活中怎么践行健康生活模式？",
+    submit:"电子版发至 3622886011@qq.com\n发完之后要跟科代表说一声", note:"新增任务；500 字论述题" },
+
+  { c:"环境卫生学", t:"平时作业（课堂主观题 10 分）", d:"2026-11-29", time:"18:00 截止", kind:"作业",
+    detail:"课堂主观题（10 分）：请设计一份南方医院附近臭水沟的水体污染调查方案。\n（含调查目的、点位布设、监测指标与频次、采样与分析方法、评价依据、质量控制等，按课堂要求作答）",
+    submit:"发送至 1542448526@qq.com（王彬沣）", note:"10 分主观题" },
+
+  { c:"环境卫生学", t:"小组 PPT 汇报 · 大气卫生", d:"2026-12-01", time:"第 03–04 节", kind:"汇报",
+    detail:"全班 42 人，6 人一组共 7 组；每组制作 8–10 分钟 PPT，展示「大气卫生」的内容，12 月 1 日第 03、04 节课堂汇报。\n分组文档已于 09/15 完成（未按时填写的按随机分配处理）。",
+    submit:"课堂汇报；分组名单已定", note:"与讨论课共用同一分组" },
+
+  { c:"环境卫生学", t:"小组汇报（讨论课·综合理论 4）", d:"2026-12-03", time:"14:30–16:55", kind:"汇报",
+    detail:"第 14 周 周四 第 06–08 节，608 教室。\n第二次讨论课汇报（同一条通知里的第二次课），同样按小组组序进行；要求与 11/5 那场一致（每组约 25 分钟，PPT 不照抄网络与课件）。",
+    submit:"课堂汇报（约 25 分钟 / 组）", note:"日期按第 14 周推算，以老师通知为准" }
+];
+
+/* ====== 常量与工具 ====== */
+const DAY = 86400000;
+const WEEK10_MON = new Date(2026, 10, 2);          // 第10周 周一
+const RANGE_START = new Date(2026, 10, 2);         // 第10周 周一
+const RANGE_END   = new Date(2026, 11, 6);         // 第14周 周日
+const TODAY = new Date(); TODAY.setHours(0,0,0,0);
+const WD = ["周日","周一","周二","周三","周四","周五","周六"];
+
+const parse = s => { const [y,m,d] = s.split("-").map(Number); return new Date(y,m-1,d); };
+const ymd   = d => d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+const md    = d => (d.getMonth()+1)+"/"+d.getDate();
+const addDays = (d,n) => new Date(d.getTime()+n*DAY);
+const sameDay = (a,b) => a.getFullYear()===b.getFullYear()&&a.getMonth()===b.getMonth()&&a.getDate()===b.getDate();
+const weekNo = d => Math.floor((d - WEEK10_MON)/DAY/7) + 10;   // 以第10周为锚
+const weekStart = n => addDays(WEEK10_MON, (n-10)*7);
+
+const byDate = {};
+EVENTS.forEach(e => { (byDate[e.d] = byDate[e.d] || []).push(e); });
+Object.values(byDate).forEach(list => list.sort((a,b)=> (a.time>b.time?1:-1)));
+
+/* ====== 顶部计数 ====== */
+document.getElementById("cnt").textContent = EVENTS.length;
+
+/* ====== 卡片 ====== */
+function cardHTML(e){
+  const col = COURSES[e.c] || {bg:"#ccc", fg:"#333"};
+  const isPast = parse(e.d) < TODAY;
+  const label = e.time;
+  const badge = e.isNew ? '<span class="c-new">新</span>' : "";
+  return `<div class="card ${isPast?"past":""} ${e.isNew?"is-new":""}" data-d="${e.d}" data-t="${encodeURIComponent(e.t)}"
+      style="--glow:${col.glow||"rgba(16,24,40,.28)"};background:linear-gradient(180deg,rgba(255,255,255,.18),rgba(255,255,255,0) 46%),linear-gradient(90deg,${col.bg},${col.top||col.bg});color:${col.fg}">
+      ${badge}
+      <span class="c-chip">${e.c}</span>
+      <div class="c-title">${e.t}</div>
+      <div class="c-time">${label}</div>
+    </div>`;
+}
+function shade(hex,p){
+  const n = parseInt(hex.slice(1),16);
+  const f = v => Math.max(0,Math.min(255, Math.round(v + (p/100)*255)));
+  return "#" + [(n>>16)&255,(n>>8)&255,n&255].map(v=>f(v).toString(16).padStart(2,"0")).join("");
+}
+
+/* ====== 滚动条 DOM 引用（必须先于渲染声明） ====== */
+const scroller = document.getElementById("scroller");
+const dragbar  = document.getElementById("dragbar");
+const thumb    = document.getElementById("thumb");
+
+/* ====== 视图一：渲染全部 ====== */
+(function renderAll(){
+  let band = "", days = "";
+  let cursor = new Date(RANGE_START);
+  let wi = 0;
+  while(cursor <= RANGE_END){
+    const wn = weekNo(cursor);
+    band += `<div class="seg ${wi%2?"odd":""}" style="width:calc(var(--colw) * 7)">
+               <b>第 ${wn} 周</b> · ${md(cursor)} – ${md(addDays(cursor,6))}</div>`;
+    for(let i=0;i<7;i++){
+      const d = addDays(cursor,i);
+      const isToday = sameDay(d,TODAY);
+      const list = (byDate[ymd(d)] || []);
+      days += `<div class="day ${isToday?"today":""}">
+        <div class="day-h">
+          <div class="dh-top">
+            <span class="dh-date">${md(d)}</span>
+            <span class="dh-wd">${WD[d.getDay()]}</span>
+            <span class="dh-week">第${weekNo(d)}周</span>
+          </div>
+          ${isToday?'<span class="today-pill">今天</span>':""}
+        </div>
+        <div class="col-body">${list.map(cardHTML).join("")}</div>
+      </div>`;
+    }
+    cursor = addDays(cursor,7); wi++;
+  }
+  document.getElementById("band").innerHTML = band;
+  document.getElementById("days").innerHTML = days;
+  document.getElementById("weeks-n").textContent = wi;
+  buildDragbar();
+  // 打开时定位到今天（若无今天则回到最左）
+  requestAnimationFrame(()=>{
+    const sc = document.getElementById("scroller");
+    // 定位到本周（周一）开头，避免出现半截的第一列
+    const idx  = (TODAY.getDay() + 6) % 7;                       // 今天在本周的第几天
+    const di   = Math.round((TODAY - RANGE_START) / DAY) - idx;  // 本周一距起点多少天
+    const colW = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--colw')) || 100;
+    if(di > 0) sc.scrollLeft = Math.max(0, di * colW);
+    syncDragbar();
+  });
+})();
+
+/* ====== 自定义拖动条 ====== */
+function metrics(){
+  const ratio = scroller.clientWidth / scroller.scrollWidth;
+  const trackW = dragbar.clientWidth - 8;
+  const w = Math.max(132, trackW * ratio);
+  const maxScroll = Math.max(1, scroller.scrollWidth - scroller.clientWidth);
+  const maxLeft = Math.max(0, trackW - w);
+  return {ratio, trackW, w, maxScroll, maxLeft};
+}
+function syncDragbar(){
+  const m = metrics();
+  thumb.style.width = m.w + "px";
+  const p = scroller.scrollLeft / m.maxScroll;
+  thumb.style.transform = `translateX(${p * m.maxLeft}px)`;
+  document.getElementById("fadeR").classList.toggle("off", p > .985);
+}
+function buildDragbar(){
+  syncDragbar();
+  window.addEventListener("resize", syncDragbar);
+}
+scroller.addEventListener("scroll", syncDragbar, {passive:true});
+let dragging = false, startX = 0, startScroll = 0, dragM = null;
+thumb.addEventListener("pointerdown", e=>{
+  dragging = true; startX = e.clientX; startScroll = scroller.scrollLeft; dragM = metrics();
+  thumb.setPointerCapture(e.pointerId); e.preventDefault();
+});
+thumb.addEventListener("pointermove", e=>{
+  if(!dragging) return;
+  const dx = e.clientX - startX;
+  const delta = dx * (dragM.maxScroll / Math.max(1, dragM.maxLeft));
+  scroller.scrollLeft = startScroll + delta;
+});
+["pointerup","pointercancel"].forEach(ev => thumb.addEventListener(ev, ()=>{
+  dragging = false;
+}));
+dragbar.addEventListener("pointerdown", e=>{
+  if(e.target === thumb || thumb.contains(e.target)) return;
+  const m = metrics();
+  const rect = dragbar.getBoundingClientRect();
+  const p = Math.min(1, Math.max(0, (e.clientX - rect.left - m.w/2) / Math.max(1, m.maxLeft)));
+  scroller.scrollTo({left: p * m.maxScroll, behavior:"smooth"});
+});
+
+/* 点击卡片 → 详情 */
+document.addEventListener("click", e=>{
+  const card = e.target.closest(".card");
+  if(!card) return;
+  const date = card.dataset.d, title = decodeURIComponent(card.dataset.t);
+  const ev = EVENTS.find(x => x.d === date && x.t === title);
+  if(ev) openModal(ev);
+});
+
+/* ====== 详情弹层 ====== */
+function openModal(e){
+  const col = COURSES[e.c] || {bg:"#ccc", fg:"#333"};
+  const tag = document.getElementById("mTag");
+  tag.textContent = e.c;
+  tag.style.background = col.bg; tag.style.color = col.fg;
+  document.getElementById("mTitle").innerHTML = (e.isNew?'<span class="m-new">新</span>':"") + escapeHTML(e.t);
+  const d = parse(e.d);
+  document.getElementById("mSub").textContent =
+    `${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日 ${WD[d.getDay()]} · 第 ${weekNo(d)} 周 · ${e.time}`;
+  document.getElementById("mBody").innerHTML =
+    `<div class="row"><div class="k">类型</div><div class="v">${escapeHTML(e.kind)}${e.isNew?"　·　本次新增":""}</div></div>
+     <div class="row"><div class="k">作业内容与要求</div><div class="v">${escapeHTML(e.detail)}</div></div>
+     <div class="row"><div class="k">提交方式</div><div class="v">${escapeHTML(e.submit)}</div></div>
+     <div class="row"><div class="k">备注</div><div class="v">${escapeHTML(e.note||"—")}</div></div>`;
+  document.getElementById("modal").classList.add("open");
+}
+function escapeHTML(s){ return String(s).replace(/[&<>"']/g, m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m])); }
+document.getElementById("mClose").onclick = ()=> document.getElementById("modal").classList.remove("open");
+document.getElementById("modal").addEventListener("click", e=>{
+  if(e.target.id === "modal") e.currentTarget.classList.remove("open");
+});
+document.addEventListener("keydown", e=>{
+  if(e.key === "Escape") document.getElementById("modal").classList.remove("open");
+});
+
+/* ====== 视图二：按周 ====== */
+const MIN_WEEK = 1, MAX_WEEK = 18;
+let curWeek = weekNo(TODAY);
+
+function countWeek(n){
+  const s = weekStart(n);
+  let c = 0;
+  for(let i=0;i<7;i++) c += (byDate[ymd(addDays(s,i))] || []).length;
+  return c;
+}
+function renderWeek(){
+  curWeek = Math.min(MAX_WEEK, Math.max(MIN_WEEK, curWeek));
+  const s = weekStart(curWeek);
+  const e = addDays(s,6);
+  document.getElementById("wkTitle").innerHTML =
+    `第 ${curWeek} 周 <span>${s.getFullYear()}年 ${md(s)} – ${md(e)}</span>`;
+  document.getElementById("prevWk").disabled = curWeek <= MIN_WEEK;
+  document.getElementById("nextWk").disabled = curWeek >= MAX_WEEK;
+
+  let html = "";
+  for(let i=0;i<7;i++){
+    const d = addDays(s,i);
+    const list = byDate[ymd(d)] || [];
+    const isToday = sameDay(d,TODAY);
+    html += `<div class="wcol ${isToday?"today":""}">
+      <div class="wcol-h">
+        <div class="wh-wd">${WD[d.getDay()]}${isToday?" · 今天":""}</div>
+        <div class="wh-date">${md(d)}</div>
+      </div>
+      <div class="wcol-b">${ list.length ? list.map(cardHTML).join("") : '<div class="empty">本日无 DDL</div>' }</div>
+    </div>`;
+  }
+  document.getElementById("weekGrid").innerHTML = html;
+  renderPopList();
+}
+function renderPopList(){
+  const list = document.getElementById("popList");
+  list.innerHTML = "";
+  for(let n=MIN_WEEK;n<=MAX_WEEK;n++){
+    const s = weekStart(n), e = addDays(s,6);
+    const c = countWeek(n);
+    const item = document.createElement("div");
+    item.className = "wk-item" + (n===curWeek ? " sel" : "");
+    item.dataset.n = n;
+    item.innerHTML = `<span class="n">第${n}周</span>
+      <span class="rng">${md(s)} – ${md(e)}</span>
+      <span class="dot ${c?"has":""}">${c||""}</span>`;
+    item.onclick = ()=>{ curWeek = n; renderWeek(); closePop(); };
+    list.appendChild(item);
+  }
+  // 选中项滚入视野
+  requestAnimationFrame(()=>{
+    const sel = list.querySelector(".wk-item.sel");
+    if(sel) list.scrollTop = sel.offsetTop - list.clientHeight/2 + sel.offsetHeight/2;
+  });
+}
+/* 菜单拖动滚动 */
+(function(){
+  const list = document.getElementById("popList");
+  let down=false, y0=0, top0=0;
+  list.addEventListener("pointerdown", e=>{
+    if(e.target.closest(".wk-item") && e.pointerType !== "touch"){ /* 允许点击，同时准备拖动 */ }
+    down=true; y0=e.clientY; top0=list.scrollTop; list.setPointerCapture(e.pointerId);
+  });
+  list.addEventListener("pointermove", e=>{
+    if(!down) return;
+    const dy = e.clientY - y0;
+    if(Math.abs(dy) > 3){ list.scrollTop = top0 - dy; list.dataset.dragged="1"; }
+  });
+  ["pointerup","pointercancel"].forEach(ev=> list.addEventListener(ev, ()=>{
+    down=false;
+    setTimeout(()=> delete list.dataset.dragged, 0);
+  }));
+  list.addEventListener("click", e=>{
+    if(list.dataset.dragged) { e.stopPropagation(); }
+  }, true);
+})();
+
+function closePop(){ document.getElementById("pop").classList.remove("open"); }
+document.getElementById("menuBtn").onclick = e=>{
+  e.stopPropagation();
+  const pop = document.getElementById("pop");
+  pop.classList.toggle("open");
+  if(pop.classList.contains("open")) renderPopList();
+};
+document.addEventListener("click", e=>{
+  if(!e.target.closest(".menu-wrap")) closePop();
+});
+document.getElementById("prevWk").onclick = ()=>{ curWeek--; renderWeek(); };
+document.getElementById("nextWk").onclick = ()=>{ curWeek++; renderWeek(); };
+document.getElementById("todayBtn").onclick = ()=>{ curWeek = weekNo(TODAY); renderWeek(); };
+
+/* ====== 模式切换 ====== */
+function setMode(mode){
+  document.querySelectorAll(".tab").forEach(t =>
+    t.classList.toggle("active", t.dataset.mode === mode));
+  document.getElementById("view-all").hidden  = (mode !== "all");
+  document.getElementById("view-week").hidden = (mode !== "week");
+  if(mode === "week"){ renderWeek(); } else { requestAnimationFrame(syncDragbar); }
+}
+document.querySelectorAll(".tab").forEach(tab=>{
+  tab.onclick = ()=> setMode(tab.dataset.mode);
+});
+
+/* 初始化 */
+renderWeek();
+setMode(String(location.hash).replace("#","") === "week" ? "week" : "all");
+</script>
+</body>
+</html>

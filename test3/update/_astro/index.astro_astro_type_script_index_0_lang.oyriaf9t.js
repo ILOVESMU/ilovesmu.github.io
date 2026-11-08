@@ -1,0 +1,1 @@
+import{t as e}from"./learning-progress.BBgCRWvP.js";var t=document.querySelectorAll(`.chapter-list [data-chapter-key]`).length,n=e(document),r=document.querySelector(`[data-learned-count]`);r&&n>0&&(r.textContent=`已学 ${n} / ${t} 章`,r.hidden=!1);

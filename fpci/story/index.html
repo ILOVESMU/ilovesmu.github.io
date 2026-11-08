@@ -1,0 +1,73 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="ice"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="文字游戏模式的入口与结构说明。当前尚未开始编写剧本。"><meta name="theme-color" content="#eef4fc"><link rel="icon" href="/fpci/favicon.svg" type="image/svg+xml"><title>文字游戏 · 食品理化检验</title><script>
+      (() => {
+        try {
+          const saved = localStorage.getItem("fpc.theme.v1");
+          if (saved === "ice" || saved === "night" || saved === "gold" || saved === "green") {
+            document.documentElement.dataset.theme = saved;
+          }
+        } catch {}
+      })();
+    </script><link rel="stylesheet" href="/fpci/_astro/BaseLayout.HVYQZWRo.css"></head><body><a class="skip-link" href="#main">跳到主要内容</a><header class="site-header" data-pagefind-ignore><a class="brand" href="/fpci/"><img class="brand-mark" src="/fpci/logo.png" alt="" width="44" height="44" decoding="async"><span class="brand-copy"><strong>食品理化检验</strong></span></a><div class="header-actions"><nav class="site-nav" aria-label="主导航"><a href="/fpci/learn/">顺序学习</a><a href="/fpci/plan/">5 小时</a><a href="/fpci/practice/">刷题</a><a href="/fpci/wrong/">错题本</a><a href="/fpci/en/">英文考点</a><a href="/fpci/audit/">待核实</a><a href="/fpci/search/">搜索</a><a href="/fpci/changelog/">更新日志</a><a href="/fpci/links/">其他网站</a><a href="/fpci/about/">关于</a></nav><div class="theme-switcher" role="group" aria-label="配色主题"><button type="button" data-theme-choice="ice" aria-pressed="false">冰蓝</button><button type="button" data-theme-choice="night" aria-pressed="false">夜间</button><button type="button" data-theme-choice="gold" aria-pressed="false">黑金</button><button type="button" data-theme-choice="green" aria-pressed="false">原绿</button></div></div></header><main id="main"><div class="container narrow"><header class="page-head"><h1>文字游戏</h1><p>这个模块会把检验流程写成一个可以走的故事：收到一批样品，按课时里学过的步骤做判断，选错了能看到后果。 现在只搭了入口和数据结构，剧本还没写。</p></header><div class="empty-state" style="margin-bottom:1.6rem"><h2>尚未开放</h2><p>文字游戏模式将在核心站稳定后接入。当前只有四个幕的骨架与课时对应关系，没有任何已完成的场景， 这里也不会显示虚构的进度。</p><div class="empty-actions"><a class="button button-primary" href="/fpci/learn/">先按课时学习</a><a class="button button-quiet" href="/fpci/practice/">去刷题</a></div></div><section><h2 style="font-size:1.1rem">计划中的四幕</h2><p class="standard-note" style="margin-bottom:1rem">每一幕覆盖的课时就是它的知识边界；场景里的数字与判断都要能回到这些课时的来源页。</p><article class="group-card"><header><h2>第一幕 · 收样</h2><span class="badge is-partial">计划中</span></header><p class="group-note">覆盖 3 个课时：第一章 绪论、第二章 食品样品采集和保存、第三章 食品样品处理</p><p class="standard-note">场景数：0（尚未编写）</p></article><article class="group-card"><header><h2>第二幕 · 营养成分</h2><span class="badge is-partial">计划中</span></header><p class="group-note">覆盖 7 个课时：第四章 营养成分检验（一）概述、第四章（二）食品中水分检验、第四章（三）食品中蛋白质和氨基酸检验、第四章（四）食品中脂肪检验、第四章（五）食品中碳水化合物检验、第四章（六）食品中维生素检验、第四章（七）食品中灰分及部分无机元素检验</p><p class="standard-note">场景数：0（尚未编写）</p></article><article class="group-card"><header><h2>第三幕 · 专项检验</h2><span class="badge is-partial">计划中</span></header><p class="group-note">覆盖 10 个课时：第五章 保健食品功效成分检验、第六章 食品添加剂检验、第七章 食品中农药残留检验、第八章 动物性食品中兽药残留检验、第九章 食品中真菌毒素检验、第十章 食品中其他化学污染物的检验、第十一章 几类常见食品的卫生检验、第十二章 食品中转基因成分的检验、第十四章 化学性食物中毒快速检验、第十五章 食品掺伪检验</p><p class="standard-note">场景数：0（尚未编写）</p></article><article class="group-card"><header><h2>第四幕 · 实验室</h2><span class="badge is-partial">计划中</span></header><p class="group-note">覆盖 3 个课时：实验1 蔬菜中有机磷和氨基甲酸酯类农药残留的快速检测、实验2 食盐中碘含量测定、实验3 白酒中甲醇的测定</p><p class="standard-note">场景数：0（尚未编写）</p></article></section></div></main><footer class="site-footer" data-pagefind-ignore><p>内容依据课程课件整理；外部标准、教材与网络资料在页面上单独标注来源。</p><p>学习目标分两种：课件原文分级，和本站依据课件结构整理的建议分级——后者不是教师要求，页面上会明确标注。</p><p>本站只保存浏览器的学习状态（已学习、错题、主题），不保存姓名、学号或真实成绩。<a href="/fpci/about/">详细说明</a> ·<a href="/fpci/audit/">待核实清单</a> ·<a href="/fpci/story/">文字游戏（筹备中）</a></p></footer><script>
+      // 站外链接统一新窗口打开，避免读者在正文里跳走找不回来
+      (() => {
+        const mark = () => {
+          document.querySelectorAll('a[href^="http"]').forEach((link) => {
+            try {
+              const url = new URL(link.href, window.location.href);
+              if (url.origin === window.location.origin) return;
+              link.setAttribute("target", "_blank");
+              link.setAttribute("rel", "noopener noreferrer");
+            } catch {}
+          });
+        };
+        if (document.readyState === "loading") {
+          document.addEventListener("DOMContentLoaded", mark, { once: true });
+        } else {
+          mark();
+        }
+      })();
+    </script><script>
+      // 站外链接统一新窗口打开，避免读者在正文里跳走找不回来
+      (() => {
+        const mark = () => {
+          document.querySelectorAll('a[href^="http"]').forEach((link) => {
+            try {
+              const url = new URL(link.href, window.location.href);
+              if (url.origin === window.location.origin) return;
+              link.setAttribute("target", "_blank");
+              link.setAttribute("rel", "noopener noreferrer");
+            } catch {}
+          });
+        };
+        if (document.readyState === "loading") {
+          document.addEventListener("DOMContentLoaded", mark, { once: true });
+        } else {
+          mark();
+        }
+      })();
+    </script><script>
+      (() => {
+        const colors = {
+          ice: "#eef4fc",
+          night: "#0b1220",
+          gold: "#0d0b09",
+          green: "#f4f8f2",
+        };
+        const choices = [...document.querySelectorAll("[data-theme-choice]")];
+        const apply = (theme) => {
+          document.documentElement.dataset.theme = theme;
+          const meta = document.querySelector('meta[name="theme-color"]');
+          if (meta) meta.setAttribute("content", colors[theme] || colors.ice);
+          try {
+            localStorage.setItem("fpc.theme.v1", theme);
+          } catch {}
+          choices.forEach((button) => {
+            button.setAttribute("aria-pressed", String(button.dataset.themeChoice === theme));
+          });
+        };
+        choices.forEach((button) => {
+          button.addEventListener("click", () => apply(button.dataset.themeChoice));
+        });
+        apply(document.documentElement.dataset.theme || "ice");
+      })();
+    </script></body></html>
